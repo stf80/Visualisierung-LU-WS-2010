@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 
+#include "gradients.h"
+#include "volumerenderer.h"
+
 namespace Ui {
     class MainWindow;
 }
@@ -17,6 +20,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    GradientEditor *m_gradient_editor;
+    VolumeRenderer *m_volume_renderer;
 };
 
 #endif // MAINWINDOW_H
