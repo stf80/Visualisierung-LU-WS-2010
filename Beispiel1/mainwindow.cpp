@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setWindowTitle(tr("Gradients"));
+
     m_gradient_editor = new GradientEditor(ui->transferFunctionGroupBox);
 
     QVBoxLayout *editorGroupLayout = new QVBoxLayout(ui->transferFunctionGroupBox);
@@ -14,21 +16,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_volume_renderer = new VolumeRenderer(ui->rendererGroupBox);
 
-    QVBoxLayout *rendererGroupLayout = new QVBoxLayout(ui->rendererGroupBox);
-    rendererGroupLayout->addWidget(m_volume_renderer);
+    //QVBoxLayout *rendererGroupLayout = new QVBoxLayout(ui->rendererGroupBox);
+    //rendererGroupLayout->addWidget(m_volume_renderer);
 
-    // set default stops
-    QGradientStops stops;
+    //connect(m_gradient_editor, SIGNAL(gradientStopsChanged(QGradientStops)),
+    //        m_volume_renderer, SLOT(setGradientStops(QGradientStops)));
 
-    stops << QGradientStop(0.00, QColor::fromRgba(0xff000000));
-    stops << QGradientStop(1.00, QColor::fromRgba(0xffffffff));
 
-    m_gradient_editor->setGradientStops(stops);
-    m_volume_renderer->setGradientStops(stops);
+    //m_volume_renderer->loadSourceFile(":res/gradients/gradients.cpp");
+    //m_volume_renderer->loadDescription(":res/gradients/gradients.html");
 
-    connect(m_gradient_editor, SIGNAL(gradientStopsChanged(QGradientStops)),
-            m_volume_renderer, SLOT(setGradientStops(QGradientStops)));
-
+    QTimer::singleShot(50, this, SLOT(setDefault()));
 
 }
 

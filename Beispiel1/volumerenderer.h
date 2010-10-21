@@ -5,12 +5,14 @@
 
 #include "arthurwidgets.h"
 
-class VolumeRenderer : public ArthurFrame
+class VolumeRenderer : public QWidget
 {
     Q_OBJECT
 
 public:
     VolumeRenderer(QWidget *parent);
+
+    ~VolumeRenderer();
 
         void paint(QPainter *p);
 
@@ -31,7 +33,7 @@ public:
         /// maps density values to RGBA colors using the transfer look-up table.
         /// parameter values:   values are clamped to the interval [0; 1]
         /// returns the RGBA color mapped to the density value
-        QRgb getTransfer(float value);
+        QRgb transfer(float value);
 
         /// updates the transfer function
         void updateTransfer();

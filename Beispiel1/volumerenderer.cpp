@@ -1,12 +1,17 @@
 
 #include "volumerenderer.h"
 
-VolumeRenderer::VolumeRenderer(QWidget *parent) : ArthurFrame(parent)
+VolumeRenderer::VolumeRenderer(QWidget *parent) : QWidget(parent)
 {
     transferLUT = QImage(4096, 1, QImage::Format_ARGB32);
 }
 
-QRgb VolumeRenderer::getTransfer(float value)
+VolumeRenderer::~VolumeRenderer()
+{
+
+}
+
+QRgb VolumeRenderer::transfer(float value)
 {
     value = value < 0.f ? 0.f : value;
     value = value > 1.f ? 1.f : value;
@@ -18,8 +23,6 @@ QRgb VolumeRenderer::getTransfer(float value)
 
 void VolumeRenderer::updateTransfer()
 {
-
-    // update the LUT
     QGradient g = QLinearGradient(QPoint(0, 0), QPoint(transferLUT.width(),0));
 
     for (int i=0; i<m_stops.size(); ++i)
@@ -33,13 +36,15 @@ void VolumeRenderer::updateTransfer()
     p->setPen(Qt::NoPen);
 
     p->drawRect(rect());
+
+    delete p;
 }
 
 void VolumeRenderer::setGradientStops(const QGradientStops &stops)
 {
     m_stops = stops;
 
-//updateTransfer();
+    updateTransfer();
 
     update();
 }
@@ -47,12 +52,14 @@ void VolumeRenderer::setGradientStops(const QGradientStops &stops)
 
 void VolumeRenderer::mousePressEvent(QMouseEvent *)
 {
-    setDescriptionEnabled(false);
+    //setDescriptionEnabled(false);
 }
 
 void VolumeRenderer::paint(QPainter *p)
 {
     //TODO replace code with raycasting
+
+    return;
 
     QGradient g = QLinearGradient(QPoint(0, 0), QPoint(this->width(), this->height()));
 
