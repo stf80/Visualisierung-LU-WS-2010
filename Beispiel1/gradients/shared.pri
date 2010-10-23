@@ -14,7 +14,7 @@ contains(CONFIG, debug_and_release_target) {
     QMAKE_LIBDIR += $$SHARED_FOLDER
 }
 
-hpux-acc*:LIBS += $$SHARED_FOLDER/libdemo_shared.a
-hpuxi-acc*:LIBS += $$SHARED_FOLDER/libdemo_shared.a
-symbian:LIBS += -ldemo_shared.lib
-!hpuxi-acc*:!hpux-acc*:!symbian:LIBS += -ldemo_shared
+#hpux-acc*:LIBS += $$SHARED_FOLDER/libdemo_shared.a
+#hpuxi-acc*:LIBS += $$SHARED_FOLDER/libdemo_shared.a
+#symbian:LIBS += -ldemo_shared.lib
+#!hpuxi-acc*:!hpux-acc*:!symbian:LIBS += -ldemo_shared

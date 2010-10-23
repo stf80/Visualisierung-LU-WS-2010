@@ -209,7 +209,7 @@
      <x>0</x>
      <y>0</y>
      <width>660</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDatei">
@@ -218,6 +218,7 @@
     </property>
     <addaction name="actionDatensatz_laden"/>
     <addaction name="actionBild_speichern"/>
+    <addaction name="actionBeenden"/>
    </widget>
    <addaction name="menuDatei"/>
   </widget>
@@ -238,6 +239,11 @@
   <action name="actionBild_speichern">
    <property name="text">
     <string>Bild speichern...</string>
+   </property>
+  </action>
+  <action name="actionBeenden">
+   <property name="text">
+    <string>Beenden</string>
    </property>
   </action>
  </widget>

@@ -12,12 +12,19 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    gradients/gradients.cpp \
-    volumerenderer.cpp
+    volumerenderer.cpp \
+    Volume.cpp \
+    Vector.cpp \
+    Quaternion.cpp \
+    Matrix.cpp
 
 HEADERS  += mainwindow.h \
-    gradients/gradients.h \
-    volumerenderer.h
+    volumerenderer.h \
+    common.h \
+    Volume.h \
+    Vector.h \
+    Quaternion.h \
+    Matrix.h
 
 FORMS    += mainwindow.ui
 
