@@ -11,10 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setWindowTitle(tr("Gradients"));
 
-    //m_gradient_editor = new GradientEditor(ui->transferFunctionGroupBox);
+    m_gradient_editor = new GradientEditor(ui->transferFunctionGroupBox);
 
-    //QVBoxLayout *editorGroupLayout = new QVBoxLayout(ui->transferFunctionGroupBox);
-    //editorGroupLayout->addWidget(m_gradient_editor);
+    QVBoxLayout *editorGroupLayout = new QVBoxLayout(ui->transferFunctionGroupBox);
+    editorGroupLayout->addWidget(m_gradient_editor);
 
     m_volume_renderer = new VolumeRenderer(ui->rendererGroupBox);
 

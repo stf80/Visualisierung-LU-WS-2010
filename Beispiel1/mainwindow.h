@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-//#include "gradients.h"
+#include "gradients.h"
 #include "volumerenderer.h"
 
 namespace Ui {
@@ -34,7 +34,7 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    //GradientEditor *m_gradient_editor;
+    GradientEditor *m_gradient_editor;
     VolumeRenderer *m_volume_renderer;
 
 private slots:

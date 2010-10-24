@@ -16,7 +16,11 @@ SOURCES += main.cpp\
     Volume.cpp \
     Vector.cpp \
     Quaternion.cpp \
-    Matrix.cpp
+    Matrix.cpp \
+    gradients/gradients.cpp \
+    gradients/arthurwidgets.cpp \
+    gradients/arthurstyle.cpp \
+    gradients/hoverpoints.cpp
 
 HEADERS  += mainwindow.h \
     volumerenderer.h \
@@ -24,7 +28,11 @@ HEADERS  += mainwindow.h \
     Volume.h \
     Vector.h \
     Quaternion.h \
-    Matrix.h
+    Matrix.h \
+    gradients/gradients.h \
+    gradients/arthurwidgets.h \
+    gradients/arthurstyle.h \
+    gradients/hoverpoints.h
 
 FORMS    += mainwindow.ui
 

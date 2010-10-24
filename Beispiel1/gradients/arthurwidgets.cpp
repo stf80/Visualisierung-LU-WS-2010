@@ -51,9 +51,7 @@
 #include <QTextBrowser>
 #include <QBoxLayout>
 
-#include <qpixmap.h>
-
-//#include <private/qpixmapdata_p.h>
+#include <private/qpixmapdata_p.h>
 
 extern QPixmap cached(const QString &img);
 
