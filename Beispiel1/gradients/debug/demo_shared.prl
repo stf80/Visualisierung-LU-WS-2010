@@ -1,0 +1,5 @@
+QMAKE_PRL_BUILD_DIR = C:/qt-greenhouse/Trolltech/Code_less_create_more/Trolltech/Code_less_create_more/Troll/4.6/qt/demos/shared
+QMAKE_PRO_INPUT = shared.pro
+QMAKE_PRL_TARGET = libdemo_shared
+QMAKE_PRL_CONFIG = include_source_dir lex yacc warn_on debug uic resources incremental_off windows debug DebugBuild Debug build_pass qt warn_on link_prl copy_dir_files debug_and_release debug_and_release_target debug stl exceptions rtti mmx 3dnow sse sse2 minimal-config small-config medium-config large-config full-config build_all debug incremental create_prl link_prl depend_includepath QTDIR_build debug DebugBuild Debug build_pass static debug DebugBuild Debug build_pass no_autoqmake staticlib static moc thread opengl
+QMAKE_PRL_LIBS = -lglu32 -lopengl32 -lgdi32 -luser32 -lQtOpenGLd4 -lQtGuid4 -lQtCored4  
