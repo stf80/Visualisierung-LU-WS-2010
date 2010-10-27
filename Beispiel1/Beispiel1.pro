@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     gradients/gradients.cpp \
     gradients/arthurwidgets.cpp \
     gradients/arthurstyle.cpp \
-    gradients/hoverpoints.cpp
+    gradients/hoverpoints.cpp \
+    colorlabel.cpp
 
 HEADERS  += mainwindow.h \
     volumerenderer.h \
@@ -32,7 +33,8 @@ HEADERS  += mainwindow.h \
     gradients/gradients.h \
     gradients/arthurwidgets.h \
     gradients/arthurstyle.h \
-    gradients/hoverpoints.h
+    gradients/hoverpoints.h \
+    colorlabel.h
 
 FORMS    += mainwindow.ui
 
