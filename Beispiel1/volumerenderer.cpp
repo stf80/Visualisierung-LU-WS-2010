@@ -1,9 +1,13 @@
 
 #include "volumerenderer.h"
 
-VolumeRenderer::VolumeRenderer(QWidget *parent) : QWidget(parent)
+VolumeRenderer::VolumeRenderer(QWidget *parent)
+//    : ArthurFrame(parent)
+    : QGraphicsView(parent)
 {
     transferLUT = QImage(4096, 1, QImage::Format_ARGB32);
+
+    image = new QImage(100, 100, QImage::Format_RGB888);
 }
 
 VolumeRenderer::~VolumeRenderer()
@@ -59,6 +63,17 @@ void VolumeRenderer::paint(QPainter *p)
 {
     //TODO replace code with raycasting
 
+
+    for (int i = 0; i < 100; ++i)
+    {
+
+        image->setPixel(i, i, QColor(i, i, i).rgba());
+
+        p->setBrush(QBrush(QColor(i,i,i)));
+        p->drawPoint(i,i);
+    }
+
+    p->drawImage(100, 100, *image);
     return;
 
     QGradient g = QLinearGradient(QPoint(0, 0), QPoint(this->width(), this->height()));
@@ -72,5 +87,4 @@ void VolumeRenderer::paint(QPainter *p)
     p->setPen(Qt::NoPen);
 
     p->drawRect(rect());
-
 }

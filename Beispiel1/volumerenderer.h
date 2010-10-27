@@ -5,7 +5,9 @@
 
 #include "arthurwidgets.h"
 
-class VolumeRenderer : public QWidget
+class VolumeRenderer :
+//        public ArthurFrame
+        public QGraphicsView
 {
     Q_OBJECT
 
@@ -25,6 +27,9 @@ public:
 
     private:
         QGradientStops m_stops;
+
+        /// Stores the rendered image;
+        QImage *image;
 
         /// Stores a look-up table for the transfer function.
         /// Contains RGBA values. The resolution is 1x4096 pixels.
