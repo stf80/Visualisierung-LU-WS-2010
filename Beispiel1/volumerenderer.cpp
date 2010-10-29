@@ -3,11 +3,14 @@
 
 VolumeRenderer::VolumeRenderer(QWidget *parent)
 //    : ArthurFrame(parent)
-    : QGraphicsView(parent)
+//    : QGraphicsView(parent)
+    : QWidget(parent)
 {
     transferLUT = QImage(4096, 1, QImage::Format_ARGB32);
 
-    image = new QImage(100, 100, QImage::Format_RGB888);
+    image = new QImage(100, 100, QImage::Format_RGB32);
+
+    pixmap = new QPixmap(QSize(100,100));
 }
 
 VolumeRenderer::~VolumeRenderer()
@@ -63,28 +66,22 @@ void VolumeRenderer::paint(QPainter *p)
 {
     //TODO replace code with raycasting
 
+    image->fill(Qt::black);
 
+    // Draw to QImage
     for (int i = 0; i < 100; ++i)
     {
-
-        image->setPixel(i, i, QColor(i, i, i).rgba());
-
-        p->setBrush(QBrush(QColor(i,i,i)));
-        p->drawPoint(i,i);
+        image->setPixel(i, i, qRgb(i, i, i));
     }
 
-    p->drawImage(100, 100, *image);
-    return;
+    // Draw Qimage to QPaintDevice
+    p->drawImage(0, 0, *image);
+}
 
-    QGradient g = QLinearGradient(QPoint(0, 0), QPoint(this->width(), this->height()));
+void VolumeRenderer::paintEvent(QPaintEvent *)
+{
+    // Use this widget as paint device
+    QPainter painter(this);
 
-    for (int i=0; i<m_stops.size(); ++i)
-        g.setColorAt(m_stops.at(i).first, m_stops.at(i).second);
-
-    g.setSpread(QGradient::PadSpread);
-
-    p->setBrush(g);
-    p->setPen(Qt::NoPen);
-
-    p->drawRect(rect());
+    paint(&painter);
 }

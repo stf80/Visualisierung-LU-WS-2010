@@ -7,7 +7,8 @@
 
 class VolumeRenderer :
 //        public ArthurFrame
-        public QGraphicsView
+//        public QGraphicsView
+        public QWidget
 {
     Q_OBJECT
 
@@ -17,6 +18,8 @@ public:
     ~VolumeRenderer();
 
         void paint(QPainter *p);
+
+        void paintEvent(QPaintEvent *);
 
         QSize sizeHint() const { return QSize(400, 400); }
 
@@ -30,6 +33,7 @@ public:
 
         /// Stores the rendered image;
         QImage *image;
+        QPixmap *pixmap;
 
         /// Stores a look-up table for the transfer function.
         /// Contains RGBA values. The resolution is 1x4096 pixels.
