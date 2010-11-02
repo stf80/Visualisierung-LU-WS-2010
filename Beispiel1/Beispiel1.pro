@@ -17,11 +17,15 @@ SOURCES += main.cpp\
     Vector.cpp \
     Quaternion.cpp \
     Matrix.cpp \
+    colorlabel.cpp \
+    framework/Vector.cpp \
+    framework/Quaternion.cpp \
+    framework/Matrix.cpp \
+    framework/Volume.cpp \
     gradients/gradients.cpp \
     gradients/arthurwidgets.cpp \
     gradients/arthurstyle.cpp \
-    gradients/hoverpoints.cpp \
-    colorlabel.cpp
+    gradients/hoverpoints.cpp
 
 HEADERS  += mainwindow.h \
     volumerenderer.h \
@@ -30,11 +34,15 @@ HEADERS  += mainwindow.h \
     Vector.h \
     Quaternion.h \
     Matrix.h \
+    colorlabel.h \
+    framework/Vector.h \
+    framework/Quaternion.h \
+    framework/Matrix.h \
+    framework/Volume.h \
     gradients/gradients.h \
     gradients/arthurwidgets.h \
     gradients/arthurstyle.h \
-    gradients/hoverpoints.h \
-    colorlabel.h
+    gradients/hoverpoints.h
 
 FORMS    += mainwindow.ui
 
