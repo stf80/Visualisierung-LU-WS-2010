@@ -13,10 +13,6 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     volumerenderer.cpp \
-    Volume.cpp \
-    Vector.cpp \
-    Quaternion.cpp \
-    Matrix.cpp \
     colorlabel.cpp \
     framework/Vector.cpp \
     framework/Quaternion.cpp \
@@ -29,11 +25,6 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     volumerenderer.h \
-    common.h \
-    Volume.h \
-    Vector.h \
-    Quaternion.h \
-    Matrix.h \
     colorlabel.h \
     framework/Vector.h \
     framework/Quaternion.h \
@@ -42,7 +33,8 @@ HEADERS  += mainwindow.h \
     gradients/gradients.h \
     gradients/arthurwidgets.h \
     gradients/arthurstyle.h \
-    gradients/hoverpoints.h
+    gradients/hoverpoints.h \
+    framework/common.h
 
 FORMS    += mainwindow.ui
 
@@ -50,5 +42,7 @@ FORMS    += mainwindow.ui
 SHARED_FOLDER = ../Beispiel1/gradients
 
 include($$SHARED_FOLDER/shared.pri)
+
+INCLUDEPATH += ../Beispiel1/framework
 
 # RESOURCES += gradients.qrc
