@@ -34,13 +34,15 @@ HEADERS  += mainwindow.h \
     gradients/arthurwidgets.h \
     gradients/arthurstyle.h \
     gradients/hoverpoints.h \
-    colorlabel.h
+    colorlabel.h \
+    gradients/private/qpixmapdata_p.h
 
 FORMS    += mainwindow.ui
 
+INCLUDEPATH += gradients
 
-SHARED_FOLDER = ../Beispiel1/gradients
+#SHARED_FOLDER = ../Beispiel1/gradients
 
-include($$SHARED_FOLDER/shared.pri)
+#include($$SHARED_FOLDER/shared.pri)
 
 # RESOURCES += gradients.qrc
