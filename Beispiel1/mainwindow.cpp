@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // transfer function editor
-    setWindowTitle(tr("Gradients"));
+    setWindowTitle(tr("Visualisierung LU 1"));
 
     m_gradient_editor = new GradientEditor(ui->transferFunctionGroupBox);
 
@@ -39,23 +39,42 @@ MainWindow::MainWindow(QWidget *parent) :
     m_specularColorLabel = new ColorLabel(ui->optionsGroupBox);
     ui->optionsGridLayout->addWidget(m_specularColorLabel, 2, 3);
 
+    m_slicing_view = NULL;
+    volume = NULL;
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    if (volume != NULL) {
+        delete volume;
+        volume = NULL;
+    }
+    if (m_slicing_view != NULL) {
+        delete m_slicing_view;
+        m_slicing_view = NULL;
+    }
+}
+
+void MainWindow::refresh_slicing_view()
+{
+    if (m_slicing_view != NULL) {
+        QGraphicsScene* scn = new QGraphicsScene(ui->slicingView);
+        scn->setSceneRect(ui->slicingView->rect());
+
+    }
 }
 
 void MainWindow::on_actionDatensatz_laden_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Datensatz laden"), ".", tr("DAT files (*.dat)"));
-    Volume volume(fileName.toStdString());
-    std::cout << "Volume (" << volume.GetWidth() << "x" << volume.GetHeight() << "x" << volume.GetDepth() << ") loaded." << std::endl;
+    volume = new Volume(fileName.toStdString());
+    m_slicing_view = new SlicingView(*volume);
+    std::cout << "Volume (" << volume->GetWidth() << "x" << volume->GetHeight() << "x" << volume->GetDepth() << ") loaded." << std::endl;
 }
 
 void MainWindow::on_actionBeenden_triggered()
 {
     QApplication::quit();
 }
-
-

@@ -22,7 +22,7 @@ inline const Type fromString(const std::string & strString)
 
 // converts from string to Type, returns true if successful
 template <class Type>
-inline const bool fromString(Type & tValue, const std::string & strString)
+inline bool fromString(Type & tValue, const std::string & strString)
 {
 	Type tTemp;
 

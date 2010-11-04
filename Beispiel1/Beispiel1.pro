@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     gradients/arthurwidgets.cpp \
     gradients/arthurstyle.cpp \
     gradients/hoverpoints.cpp \
-    colorlabel.cpp
+    colorlabel.cpp \
+    slicingview.cpp
 
 HEADERS  += mainwindow.h \
     volumerenderer.h \
@@ -35,7 +36,8 @@ HEADERS  += mainwindow.h \
     gradients/arthurstyle.h \
     gradients/hoverpoints.h \
     colorlabel.h \
-    gradients/private/qpixmapdata_p.h
+    gradients/private/qpixmapdata_p.h \
+    slicingview.h
 
 FORMS    += mainwindow.ui
 

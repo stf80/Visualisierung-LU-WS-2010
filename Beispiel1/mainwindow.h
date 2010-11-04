@@ -6,6 +6,8 @@
 #include "gradients.h"
 #include "volumerenderer.h"
 #include "colorlabel.h"
+#include "slicingview.h"
+#include "Volume.h"
 
 namespace Ui {
     class MainWindow;
@@ -37,10 +39,15 @@ private slots:
     void on_actionDatensatz_laden_triggered();
 
 private:
+    void refresh_slicing_view();
+
     Ui::MainWindow *ui;
+
+    Volume* volume;
 
     GradientEditor *m_gradient_editor;
     VolumeRenderer *m_volume_renderer;
+    SlicingView *m_slicing_view;
 
     ColorLabel *m_lightColorLabel, *m_ambientColorLabel, *m_diffuseColorLabel, *m_specularColorLabel;
 };
