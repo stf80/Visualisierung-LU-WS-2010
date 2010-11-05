@@ -35,11 +35,14 @@ public slots:
     }
 
 private slots:
+    void on_slicingScrollBar_valueChanged(int value);
+    void on_slicingComboBox_currentIndexChanged(int index);
     void on_actionBeenden_triggered();
     void on_actionDatensatz_laden_triggered();
 
 private:
-    void refresh_slicing_view();
+    void reset_slicing_scrollbar();
+    void update_slicing_view();
 
     Ui::MainWindow *ui;
 
@@ -47,7 +50,6 @@ private:
 
     GradientEditor *m_gradient_editor;
     VolumeRenderer *m_volume_renderer;
-    SlicingView *m_slicing_view;
 
     ColorLabel *m_lightColorLabel, *m_ambientColorLabel, *m_diffuseColorLabel, *m_specularColorLabel;
 };

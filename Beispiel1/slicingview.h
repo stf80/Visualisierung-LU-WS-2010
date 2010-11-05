@@ -4,13 +4,18 @@
 #include <QtGui>
 #include "Volume.h"
 
-class SlicingView
+class SlicingView : public QWidget
 {
 public:
-    SlicingView(const Volume& volume);
+    SlicingView();
+    SlicingView(QGroupBox*& gb);
     virtual ~SlicingView();
 
-    QImage* render(int direction, int depth);
+    virtual void paintEvent(QPaintEvent* event);
+
+    inline void setVolume(Volume *volume) { this->volume = volume; }
+    inline void setDirection(int direction) { this->direction = direction; }
+    inline void setPosition(int position) { this->position = position; }
 
     enum {
         DIRECTION_X,
@@ -19,9 +24,9 @@ public:
     };
 
 private:
-    const Volume& volume;
+    Volume *volume;
     int direction;
-    int depth;
+    int position;
     QImage* image;
 };
 
