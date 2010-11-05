@@ -54,42 +54,42 @@ public:
 		m_vfElements[2] = fZ;
         }
 
-	const float * Get() const
+        const float * Get() const
 	{
 		return m_vfElements;
         }
 
-	const float Get(const unsigned int uIndex) const
+        float Get(const unsigned int uIndex) const
 	{
 		return m_vfElements[uIndex];
         }
 
-	const float GetX() const
+        float GetX() const
 	{
 		return m_vfElements[0];
         }
 
-	const float GetY() const
+        float GetY() const
 	{
 		return m_vfElements[1];
         }
 
-	const float GetZ() const
+        float GetZ() const
 	{
 		return m_vfElements[2];
         }
 
-	const float GetMagnitude() const
+        float GetMagnitude() const
 	{
 		return sqrtf(GetX()*GetX() + GetY()*GetY() + GetZ()*GetZ());
         }
 
-	const float GetSquaredMagnitude() const
+        float GetSquaredMagnitude() const
 	{
 		return (GetX()*GetX() + GetY()*GetY() + GetZ()*GetZ());
         }
 
-	const float GetDot(const Vector &vecOther) const
+        float GetDot(const Vector &vecOther) const
 	{
 		return (GetX() * vecOther.GetX() + GetY()*vecOther.GetY() + GetZ()*vecOther.GetZ());
         }
@@ -125,12 +125,12 @@ public:
 		(*this) = GetInverse();
         }
 
-	const bool operator==(const Vector & vecOther) const
+        bool operator==(const Vector & vecOther) const
 	{
 		return (GetX() == vecOther.GetX()) && (GetY() == vecOther.GetY()) && (GetZ() == vecOther.GetZ());
         }
 
-	const bool operator!=(const Vector & vecOther) const
+        bool operator!=(const Vector & vecOther) const
 	{
 		return !(*this == vecOther);
         }
@@ -140,7 +140,7 @@ public:
 		return m_vfElements[uIndex];
         }
 
-	const float operator[](const unsigned int uIndex) const
+        float operator[](const unsigned int uIndex) const
 	{
 		return m_vfElements[uIndex];
         }

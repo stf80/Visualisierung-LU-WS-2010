@@ -6,6 +6,8 @@
 #include "gradients.h"
 #include "volumerenderer.h"
 #include "colorlabel.h"
+#include "slicingview.h"
+#include "Volume.h"
 
 namespace Ui {
     class MainWindow;
@@ -33,11 +35,18 @@ public slots:
     }
 
 private slots:
+    void on_slicingScrollBar_valueChanged(int value);
+    void on_slicingComboBox_currentIndexChanged(int index);
     void on_actionBeenden_triggered();
     void on_actionDatensatz_laden_triggered();
 
 private:
+    void reset_slicing_scrollbar();
+    void update_slicing_view();
+
     Ui::MainWindow *ui;
+
+    Volume* volume;
 
     GradientEditor *m_gradient_editor;
     VolumeRenderer *m_volume_renderer;

@@ -13,7 +13,6 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     volumerenderer.cpp \
-    colorlabel.cpp \
     framework/Vector.cpp \
     framework/Quaternion.cpp \
     framework/Matrix.cpp \
@@ -21,11 +20,12 @@ SOURCES += main.cpp\
     gradients/gradients.cpp \
     gradients/arthurwidgets.cpp \
     gradients/arthurstyle.cpp \
-    gradients/hoverpoints.cpp
+    gradients/hoverpoints.cpp \
+    colorlabel.cpp \
+    slicingview.cpp
 
 HEADERS  += mainwindow.h \
     volumerenderer.h \
-    colorlabel.h \
     framework/Vector.h \
     framework/Quaternion.h \
     framework/Matrix.h \
@@ -34,10 +34,13 @@ HEADERS  += mainwindow.h \
     gradients/arthurwidgets.h \
     gradients/arthurstyle.h \
     gradients/hoverpoints.h \
-    framework/common.h
+    colorlabel.h \
+    gradients/private/qpixmapdata_p.h \
+    slicingview.h
 
 FORMS    += mainwindow.ui
 
+INCLUDEPATH += gradients
 
 SHARED_FOLDER = ../Beispiel1/gradients
 

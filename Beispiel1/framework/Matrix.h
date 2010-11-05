@@ -14,7 +14,7 @@ public:
 	{
 		m_vfElements.m_vfElements16[0]=m_vfElements.m_vfElements16[5]=m_vfElements.m_vfElements16[10]=m_vfElements.m_vfElements16[15]=1.0f;
 		m_vfElements.m_vfElements16[1]=m_vfElements.m_vfElements16[2]=m_vfElements.m_vfElements16[3]=m_vfElements.m_vfElements16[4]=m_vfElements.m_vfElements16[6]=m_vfElements.m_vfElements16[7]=m_vfElements.m_vfElements16[8]=m_vfElements.m_vfElements16[9]=m_vfElements.m_vfElements16[11]=m_vfElements.m_vfElements16[12]=m_vfElements.m_vfElements16[13]=m_vfElements.m_vfElements16[14]=0.0f;
-	};
+        }
 
 	Matrix(	const float & fElement0, const float & fElement4, const float & fElement8, const float & fElement12,
 					const float & fElement1, const float & fElement5, const float & fElement9, const float & fElement13,
@@ -25,7 +25,7 @@ public:
 		m_vfElements.m_vfElements16[1]=fElement1; m_vfElements.m_vfElements16[5]=fElement5;  m_vfElements.m_vfElements16[9]=fElement9;  m_vfElements.m_vfElements16[13]=fElement13;
 		m_vfElements.m_vfElements16[2]=fElement2; m_vfElements.m_vfElements16[6]=fElement6; m_vfElements.m_vfElements16[10]=fElement10; m_vfElements.m_vfElements16[14]=fElement14;
 		m_vfElements.m_vfElements16[3]=fElement3; m_vfElements.m_vfElements16[7]=fElement7; m_vfElements.m_vfElements16[11]=fElement11; m_vfElements.m_vfElements16[15]=fElement15;
-	};
+        }
 
 	Matrix(const Vector & vecOne, const Vector & vecTwo, const Vector & vecThree, const Vector & vecFour = Vector(0.0f,0.0f,0.0f))
 	{
@@ -34,59 +34,59 @@ public:
 		m_vfElements.m_vfElements16[1]=vecTwo.GetX(); m_vfElements.m_vfElements16[5]=vecTwo.GetY();  m_vfElements.m_vfElements16[9]=vecTwo.GetZ();  m_vfElements.m_vfElements16[13]=0.0f;
 		m_vfElements.m_vfElements16[2]=vecThree.GetX(); m_vfElements.m_vfElements16[6]=vecThree.GetY(); m_vfElements.m_vfElements16[10]=vecThree.GetZ(); m_vfElements.m_vfElements16[14]=0.0f;
 		m_vfElements.m_vfElements16[3]=0.0f; m_vfElements.m_vfElements16[7]=0.0f; m_vfElements.m_vfElements16[11]=0.0f; m_vfElements.m_vfElements16[15]=1.0f;	
-	};
+        }
 
 	Matrix(const float *pElements)
 	{
 		memcpy((void*)m_vfElements.m_vfElements16, (void *)pElements, 16*sizeof(float));
-	};
+        }
 
 	Matrix(const float vfElements[4][4])
 	{
 		memcpy((void*)m_vfElements.m_vfElements16, (void *)vfElements, 16*sizeof(float));
-	};
+        }
 
 	Matrix(const Quaternion & quaRotation)
 	{
 		m_vfElements.m_vfElements16[0]=m_vfElements.m_vfElements16[5]=m_vfElements.m_vfElements16[10]=m_vfElements.m_vfElements16[15]=1.0f;
 		m_vfElements.m_vfElements16[1]=m_vfElements.m_vfElements16[2]=m_vfElements.m_vfElements16[3]=m_vfElements.m_vfElements16[4]=m_vfElements.m_vfElements16[6]=m_vfElements.m_vfElements16[7]=m_vfElements.m_vfElements16[8]=m_vfElements.m_vfElements16[9]=m_vfElements.m_vfElements16[11]=m_vfElements.m_vfElements16[12]=m_vfElements.m_vfElements16[13]=m_vfElements.m_vfElements16[14]=0.0f;
 		rotate(quaRotation);
-	};
+        }
 
 	~Matrix()
 	{
-	};
+        }
 
 	void Set(const float *pElements)
 	{
 		memcpy((void*)m_vfElements.m_vfElements16, (void *)pElements, 16*sizeof(float));
-	};
+        }
 
-    void clearMatrix()
+        void clearMatrix()
 	{
 		m_vfElements.m_vfElements16[0]=m_vfElements.m_vfElements16[5]=m_vfElements.m_vfElements16[10]=m_vfElements.m_vfElements16[15]=1.0f;
 		m_vfElements.m_vfElements16[1]=m_vfElements.m_vfElements16[2]=m_vfElements.m_vfElements16[3]=m_vfElements.m_vfElements16[4]=m_vfElements.m_vfElements16[6]=m_vfElements.m_vfElements16[7]=m_vfElements.m_vfElements16[8]=m_vfElements.m_vfElements16[9]=m_vfElements.m_vfElements16[11]=m_vfElements.m_vfElements16[12]=m_vfElements.m_vfElements16[13]=m_vfElements.m_vfElements16[14]=0.0f;
-	};
+        }
 
-	const float * Get() const
+        float * Get() const
 	{
 		return (float *) m_vfElements.m_vfElements16;
-	};
+        }
 
 	void Set(const unsigned int i, const unsigned int j, const float & fValue)
 	{
 		m_vfElements.m_vfElements44[i][j] = fValue;
-	};
+        }
 
-	const float & Get(const unsigned int i, const unsigned int j) const
+        const float & Get(const unsigned int i, const unsigned int j) const
 	{
 		return m_vfElements.m_vfElements44[i][j];
-	};
+        }
 
-	const float & Get(const unsigned int i) const
+        const float & Get(const unsigned int i) const
 	{
 		return m_vfElements.m_vfElements16[i];
-	};
+        }
 
 	void SetRow(const unsigned int i, const float vfValues[4])
 	{
@@ -94,7 +94,7 @@ public:
 		m_vfElements.m_vfElements16[ i+4] = vfValues[1];
 		m_vfElements.m_vfElements16[ i+8] = vfValues[2];
 		m_vfElements.m_vfElements16[i+12] = vfValues[3];	
-	};
+        }
 
 	void SetColumn(const unsigned int i, const float vfValues[4])
 	{
@@ -102,31 +102,31 @@ public:
 		m_vfElements.m_vfElements16[i*4+1] = vfValues[1];
 		m_vfElements.m_vfElements16[i*4+2] = vfValues[2];
 		m_vfElements.m_vfElements16[i*4+3] = vfValues[3];
-	};
+        }
 
 	void SetRow(const unsigned int i, const Vector & vecVector)
 	{
 		m_vfElements.m_vfElements16[ i+0] = vecVector.GetX();
 		m_vfElements.m_vfElements16[ i+4] = vecVector.GetY();
 		m_vfElements.m_vfElements16[ i+8] = vecVector.GetZ();
-	};
+        }
 
 	void SetColumn(const unsigned int i, const Vector & vecVector)
 	{
 		m_vfElements.m_vfElements16[i*4+0] = vecVector.GetX();
 		m_vfElements.m_vfElements16[i*4+1] = vecVector.GetY();
 		m_vfElements.m_vfElements16[i*4+2] = vecVector.GetZ();
-	};
+        }
 
 	float & operator()(const unsigned int i, const unsigned int j)
 	{
 		return m_vfElements.m_vfElements44[i][j];
-	};
+        }
 
 	const float & operator()(const unsigned int i, const unsigned int j) const
 	{
 		return m_vfElements.m_vfElements44[i][j];
-	};
+        }
 
 	void SetTranslation(const Vector & vecTranslation)
 	{
@@ -134,12 +134,12 @@ public:
 		m_vfElements.m_vfElements16[13] = vecTranslation.GetY();
 		m_vfElements.m_vfElements16[14] = vecTranslation.GetZ();
 		m_vfElements.m_vfElements16[15] = 1.0f;
-	};
+        }
 
 	const Vector GetTranslation() const
 	{
 		return Vector(m_vfElements.m_vfElements16[12],m_vfElements.m_vfElements16[13],m_vfElements.m_vfElements16[14]);
-	};
+        }
 
 	const Quaternion GetRotation() const
 	{
@@ -186,27 +186,27 @@ public:
 				return Quaternion(Vector(fX,fY,fZ).GetNormalized(),fW);
 			}
 		}
-	};
+        }
 
 	const Matrix GetTranslated(const Vector & vecTranslation) const
 	{
 		return (*this) * Matrix(1.0f,0.0f,0.0f,vecTranslation.GetX(), 0.0f,1.0f,0.0f,vecTranslation.GetY(), 0.0f,0.0f,1.0f,vecTranslation.GetZ(), 0.0f, 0.0f,0.0f,1.0f);
-	};
+        }
 
 	void translate(const Vector &vecTranslation)
 	{
 		*this = GetTranslated(vecTranslation);
-	};
+        }
 
 	const Matrix GetScaled(const Vector &vecScale) const
 	{
 		return (*this) * 	Matrix(	vecScale.GetX(),0.0f,0.0f,0.0f, 0.0f,vecScale.GetY(),0.0f,0.0f,	0.0f,0.0f,vecScale.GetZ(),0.0f, 0.0f,0.0f,0.0f,1.0f);
-	};
+        }
 
 	void scale(const Vector &vecScale)
 	{
 		*this = GetScaled(vecScale);
-	};
+        }
 
 	const Matrix GetRotated(const Quaternion & quaRotation) const
 	{
@@ -221,12 +221,12 @@ public:
 		const float fZW = quaRotation.GetVector().GetZ() * quaRotation.GetScalar();
 
 		return (*this) * Matrix(1.0f - 2.0f * (fYY + fZZ), 2.0f * (fXY - fZW), 2.0f * (fXZ + fYW), 0.0f,  2.0f * (fXY + fZW), 1.0f - 2.0f * (fXX + fZZ), 2.0f * (fYZ - fXW), 0.0f, 2.0f * (fXZ - fYW), 2.0f * (fYZ + fXW), 1.0f - 2.0f * (fXX + fYY), 0.0f,	0.0f, 0.0f, 0.0f, 1.0f);
-	};
+        }
 
 	void rotate(const Quaternion & quaRotation)
 	{
 		*this = GetRotated(quaRotation);
-	};
+        }
 
 	const Matrix GetInverse() const
 	{
@@ -311,7 +311,7 @@ public:
 		matNew.m_vfElements.m_vfElements44[1][1] = (m_vfElements.m_vfElements44[0][0]*fTmp1-m_vfElements.m_vfElements44[0][0]*fTmp4-m_vfElements.m_vfElements44[2][0]*fTmp6+m_vfElements.m_vfElements44[2][0]*fTmp8+m_vfElements.m_vfElements44[3][0]*fTmp11-m_vfElements.m_vfElements44[3][0]*fTmp14)*fTmp84;
 
 		return matNew;
-	};
+        }
 
 	void invert()
 	{
@@ -325,12 +325,12 @@ public:
 			m_vfElements.m_vfElements16[4],m_vfElements.m_vfElements16[5],m_vfElements.m_vfElements16[6],m_vfElements.m_vfElements16[7],
 			m_vfElements.m_vfElements16[8],m_vfElements.m_vfElements16[9],m_vfElements.m_vfElements16[10],m_vfElements.m_vfElements16[11],
 			m_vfElements.m_vfElements16[12],m_vfElements.m_vfElements16[13],m_vfElements.m_vfElements16[14],m_vfElements.m_vfElements16[15]);
-	};
+        }
 
 	void transpose()
 	{
 		(*this) = GetTransposed();
-	};
+        }
 
 	const Vector GetRotated(const Vector & vecOther) const
 	{
@@ -338,9 +338,9 @@ public:
 			(m_vfElements.m_vfElements16[0]*vecOther.GetX() + m_vfElements.m_vfElements16[4]*vecOther.GetY() + m_vfElements.m_vfElements16[8]*vecOther.GetZ()), 
 			(m_vfElements.m_vfElements16[1]*vecOther.GetX() + m_vfElements.m_vfElements16[5]*vecOther.GetY() + m_vfElements.m_vfElements16[9]*vecOther.GetZ()),
 			(m_vfElements.m_vfElements16[2]*vecOther.GetX() + m_vfElements.m_vfElements16[6]*vecOther.GetY() + m_vfElements.m_vfElements16[10]*vecOther.GetZ()));
-	};
+        }
 
-	const bool operator==(const Matrix & matOther) const
+        bool operator==(const Matrix & matOther) const
 	{
 		for (unsigned int i=0;i < 16; i++)
 		{
@@ -349,12 +349,12 @@ public:
 		}
 
 		return true;
-	};
+        }
 
-	const bool operator!=(const Matrix & matOther) const
+        bool operator!=(const Matrix & matOther) const
 	{
 		return !(*this == matOther);
-	};
+        }
 
 	const Matrix operator*(const Matrix & matOther) const
 	{
@@ -378,13 +378,13 @@ public:
 			m_vfElements.m_vfElements16[3]*matOther.m_vfElements.m_vfElements16[4] + m_vfElements.m_vfElements16[7]*matOther.m_vfElements.m_vfElements16[5] + m_vfElements.m_vfElements16[11]*matOther.m_vfElements.m_vfElements16[6] + m_vfElements.m_vfElements16[15]*matOther.m_vfElements.m_vfElements16[7],
 			m_vfElements.m_vfElements16[3]*matOther.m_vfElements.m_vfElements16[8] + m_vfElements.m_vfElements16[7]*matOther.m_vfElements.m_vfElements16[9] + m_vfElements.m_vfElements16[11]*matOther.m_vfElements.m_vfElements16[10] + m_vfElements.m_vfElements16[15]*matOther.m_vfElements.m_vfElements16[11],
 			m_vfElements.m_vfElements16[3]*matOther.m_vfElements.m_vfElements16[12] + m_vfElements.m_vfElements16[7]*matOther.m_vfElements.m_vfElements16[13] + m_vfElements.m_vfElements16[11]*matOther.m_vfElements.m_vfElements16[14] + m_vfElements.m_vfElements16[15]*matOther.m_vfElements.m_vfElements16[15] );
-	};
+        }
 
 	const Matrix & operator*=(const Matrix & matOther)
 	{
 		*this = (*this) * matOther;
 		return *this;
-	};
+        }
 
 	const Vector operator* (const Vector &vecOther) const
 	{
@@ -393,7 +393,7 @@ public:
 			(m_vfElements.m_vfElements16[0]*vecOther.GetX() + m_vfElements.m_vfElements16[4]*vecOther.GetY() + m_vfElements.m_vfElements16[8]*vecOther.GetZ() + m_vfElements.m_vfElements16[12]) / fW, 
 			(m_vfElements.m_vfElements16[1]*vecOther.GetX() + m_vfElements.m_vfElements16[5]*vecOther.GetY() + m_vfElements.m_vfElements16[9]*vecOther.GetZ() + m_vfElements.m_vfElements16[13]) / fW,
 			(m_vfElements.m_vfElements16[2]*vecOther.GetX() + m_vfElements.m_vfElements16[6]*vecOther.GetY() + m_vfElements.m_vfElements16[10]*vecOther.GetZ() + m_vfElements.m_vfElements16[14]) / fW );
-	};
+        }
 
 private:
 

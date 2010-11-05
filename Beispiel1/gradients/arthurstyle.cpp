@@ -68,7 +68,7 @@ QPixmap cached(const QString &img)
 ArthurStyle::ArthurStyle()
     : QWindowsStyle()
 {
-    Q_INIT_RESOURCE(shared);
+    //Q_INIT_RESOURCE(shared);
 }
 
 

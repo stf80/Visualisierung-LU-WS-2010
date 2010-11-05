@@ -46,6 +46,7 @@ public:
 
         /// updates the transfer function
         void updateTransfer();
+
 };
 
 #endif // VOLUMERENDERER_H

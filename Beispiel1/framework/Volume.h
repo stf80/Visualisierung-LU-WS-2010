@@ -44,37 +44,37 @@ public:
 			m_fValue = fValue;
                 }
 
-		const float GetValue() const
+                float GetValue() const
 		{
 			return m_fValue;
                 }
 
-		const bool operator==(const Voxel &datOther) const
+                bool operator==(const Voxel &datOther) const
 		{
 			return (GetValue() == datOther.GetValue());
                 }
 
-		const bool operator!=(const Voxel &datOther) const
+                bool operator!=(const Voxel &datOther) const
 		{
 			return !(*this == datOther);
                 }
 
-		const bool operator>(const Voxel &datOther) const
+                bool operator>(const Voxel &datOther) const
 		{
 			return GetValue() > datOther.GetValue();
                 }
 
-		const bool operator>=(const Voxel &datOther) const
+                bool operator>=(const Voxel &datOther) const
 		{
 			return GetValue() >= datOther.GetValue();
                 }
 
-		const bool operator<(const Voxel &datOther) const
+                bool operator<(const Voxel &datOther) const
 		{
 			return GetValue() < datOther.GetValue();
                 }
 
-		const bool operator<=(const Voxel &datOther) const
+                bool operator<=(const Voxel &datOther) const
 		{
 			return GetValue() <= datOther.GetValue();
                 }
@@ -164,22 +164,22 @@ public:
 		return &(m_vecVoxels.front());
         }
 
-	const int GetWidth() const
+        int GetWidth() const
 	{
 		return m_iWidth;
         }
 
-	const int GetHeight() const
+        int GetHeight() const
 	{
 		return m_iHeight;
         }
 
-	const int GetDepth() const
+        int GetDepth() const
 	{
 		return m_iDepth;
         }
 
-	const int GetSize() const
+        int GetSize() const
 	{
 		return int(m_vecVoxels.size());
         }
@@ -239,6 +239,6 @@ public:
 protected:
 
 private:
-	std::vector<Voxel> m_vecVoxels;
 	int m_iWidth,m_iHeight,m_iDepth;
+        std::vector<Voxel> m_vecVoxels;
 };
