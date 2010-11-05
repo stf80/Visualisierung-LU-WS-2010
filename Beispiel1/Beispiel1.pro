@@ -35,7 +35,6 @@ HEADERS  += mainwindow.h \
     gradients/arthurstyle.h \
     gradients/hoverpoints.h \
     colorlabel.h \
-    gradients/private/qpixmapdata_p.h \
     slicingview.h
 
 FORMS    += mainwindow.ui

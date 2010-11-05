@@ -9,8 +9,6 @@ VolumeRenderer::VolumeRenderer(QWidget *parent)
     transferLUT = QImage(4096, 1, QImage::Format_ARGB32);
 
     image = new QImage(100, 100, QImage::Format_RGB32);
-
-    pixmap = new QPixmap(QSize(100,100));
 }
 
 VolumeRenderer::~VolumeRenderer()
@@ -56,12 +54,6 @@ void VolumeRenderer::setGradientStops(const QGradientStops &stops)
     update();
 }
 
-
-void VolumeRenderer::mousePressEvent(QMouseEvent *)
-{
-    //setDescriptionEnabled(false);
-}
-
 void VolumeRenderer::paint(QPainter *p)
 {
     //TODO replace code with raycasting
@@ -78,7 +70,7 @@ void VolumeRenderer::paint(QPainter *p)
     p->drawImage(0, 0, *image);
 }
 
-void VolumeRenderer::paintEvent(QPaintEvent *)
+void VolumeRenderer::paintEvent(QPaintEvent *e)
 {
     // Use this widget as paint device
     QPainter painter(this);

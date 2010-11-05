@@ -13,45 +13,78 @@ namespace Ui {
     class MainWindow;
 }
 
+/**
+ * @brief The main window of the application. Also handles menu actions.
+ *
+*/
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
+    /**
+     * @brief The default constructor
+     *
+     * @param parent the parent widget
+    */
     explicit MainWindow(QWidget *parent = 0);
+    /**
+     * @brief Default destructor.
+     *
+    */
     ~MainWindow();
 
 public slots:
-    void setDefault()
-    {
-        // set default stops
-        //QGradientStops stops;
-
-        //stops << QGradientStop(0.00, QColor::fromRgba(0xff000000));
-        //stops << QGradientStop(1.00, QColor::fromRgba(0xffffffff));
-
-        //m_gradient_editor->setGradientStops(stops);
-        //m_volume_renderer->setGradientStops(stops);
-    }
+    /**
+     * @brief Sets default values for gradient editor points.
+     *
+    */
+    void setDefault();
 
 private slots:
+    /**
+     * @brief Invoked when the value of the slicing view scrollbar changes. Redraws the slicing view.
+     *
+     * @param value
+    */
     void on_slicingScrollBar_valueChanged(int value);
+    /**
+     * @brief Invoked when the direction of the slicing view changes. Redraws the slicing view and resets the slicing scrollbar.
+     *
+     * @param index
+    */
     void on_slicingComboBox_currentIndexChanged(int index);
+    /**
+     * @brief Invoked when application is quit using the file menu. Closes the application.
+     *
+    */
     void on_actionBeenden_triggered();
+    /**
+     * @brief Invoked when a data set is loaded using the file menu. Opens a file dialog, loads the selected file and redraws the slicing view.
+     *
+    */
     void on_actionDatensatz_laden_triggered();
 
 private:
+    /**
+     * @brief Sets maximum for slicing view scrollbar, depending on current view direction, and resets current value.
+     *
+    */
     void reset_slicing_scrollbar();
+    /**
+     * @brief Updates view direction, view plane and size of the slicing view and redraws it.
+     *
+    */
     void update_slicing_view();
 
-    Ui::MainWindow *ui;
+    Ui::MainWindow *ui; /** the main window, contains all widgets created in the form editor */
 
-    Volume* volume;
+    Volume* volume; /** the volume to render */
 
-    GradientEditor *m_gradient_editor;
-    VolumeRenderer *m_volume_renderer;
+    GradientEditor *m_gradient_editor; /** the gradient editor used to edit the transfer function */
+    VolumeRenderer *m_volume_renderer; /** rendering view of the volume data */
 
-    ColorLabel *m_lightColorLabel, *m_ambientColorLabel, *m_diffuseColorLabel, *m_specularColorLabel;
+    ColorLabel *m_lightColorLabel, *m_ambientColorLabel, *m_diffuseColorLabel, *m_specularColorLabel; /** ColorLabels used to select RGB rendering options */
 };
 
 #endif // MAINWINDOW_H

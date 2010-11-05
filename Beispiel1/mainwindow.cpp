@@ -53,6 +53,18 @@ MainWindow::~MainWindow()
     }
 }
 
+void MainWindow::setDefault()
+{
+    // set default stops
+    QGradientStops stops;
+
+    stops << QGradientStop(0.00, QColor::fromRgba(0xff000000));
+    stops << QGradientStop(1.00, QColor::fromRgba(0xffffffff));
+
+    m_gradient_editor->setGradientStops(stops);
+    m_volume_renderer->setGradientStops(stops);
+}
+
 void MainWindow::reset_slicing_scrollbar()
 {
     if (volume != NULL) {
@@ -72,21 +84,38 @@ void MainWindow::update_slicing_view()
 {
     ui->slicingView->setDirection(ui->slicingComboBox->currentIndex());
     ui->slicingView->setPosition(ui->slicingScrollBar->value());
+
+    // set view size to natural size of volume so image isn't scaled
+    if (volume)
+    {
+        ui->slicingView->setMinimumSize(volume->GetWidth(), volume->GetHeight());
+        ui->slicingView->setMaximumSize(volume->GetWidth(), volume->GetHeight());
+    }
     ui->slicingView->repaint();
 }
 
 void MainWindow::on_actionDatensatz_laden_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Datensatz laden"), ".", tr("DAT files (*.dat)"));
-    volume = new Volume(fileName.toStdString());
 
-    ui->slicingView->setVolume(volume);
-    ui->slicingView->setDirection(SlicingView::DIRECTION_X);
-    ui->slicingView->setPosition(0);
-    ui->slicingView->repaint();
+    // user may abort the file dialog, in which case the file name will be empty
+    if (!fileName.isEmpty())
+    {
+        // free the old volume, if any
+        if (volume)
+            delete volume;
 
-    reset_slicing_scrollbar();
-    std::cout << "Volume (" << volume->GetWidth() << "x" << volume->GetHeight() << "x" << volume->GetDepth() << ") loaded." << std::endl;
+        volume = new Volume(fileName.toStdString());
+
+        ui->slicingView->setVolume(volume);
+        ui->slicingView->setDirection(SlicingView::DIRECTION_X);
+        ui->slicingView->setPosition(0);
+        ui->slicingView->repaint();
+
+        reset_slicing_scrollbar();
+        update_slicing_view();
+        //std::cout << "Volume (" << volume->GetWidth() << "x" << volume->GetHeight() << "x" << volume->GetDepth() << ") loaded." << std::endl;
+    }
 }
 
 void MainWindow::on_actionBeenden_triggered()
