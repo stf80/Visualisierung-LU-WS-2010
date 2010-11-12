@@ -43,7 +43,7 @@ INCLUDEPATH += gradients
 
 SHARED_FOLDER = ../Beispiel1/gradients
 
-include($$SHARED_FOLDER/shared.pri)
+#include($$SHARED_FOLDER/shared.pri)
 
 INCLUDEPATH += ../Beispiel1/framework
 
