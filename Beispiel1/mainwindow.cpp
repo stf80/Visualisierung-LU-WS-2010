@@ -89,7 +89,7 @@ void MainWindow::update_slicing_view()
     if (volume)
     {
         int idx = ui->slicingComboBox->currentIndex();
-        int scale = 2;
+        int scale = 1;
         if (idx == 0) { // X Axis
             ui->slicingView->setMinimumSize(volume->GetDepth()*scale, volume->GetHeight()*scale);
             ui->slicingView->setMaximumSize(volume->GetDepth()*scale, volume->GetHeight()*scale);
