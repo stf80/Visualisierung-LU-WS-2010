@@ -20,9 +20,6 @@ VolumeRenderer::VolumeRenderer(QWidget *parent)
         yRot = 0;
         zRot = 0;
 
-        std::cerr << "Widget is valid: " << isValid() << std::endl;
-        std::cerr << "has OpenGL shader: " << QGLShaderProgram::hasOpenGLShaderPrograms() << std::endl;
-
 
 }
 
@@ -195,9 +192,14 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
 
  void VolumeRenderer::initializeGL()
  {
+     std::cerr << "Widget is valid: " << isValid() << std::endl;
+     std::cerr << "context " << QGLContext::currentContext() << std::endl;
+     std::cerr << "has OpenGL shader: " << QGLShaderProgram::hasOpenGLShaderPrograms() << std::endl;
+
+
      //qglClearColor(qtPurple.dark());
     glClearColor(0.0, 0.0, 0.0, 1.0);
-    /*
+
      glEnable(GL_DEPTH_TEST);
      glEnable(GL_CULL_FACE);
      glShadeModel(GL_SMOOTH);
@@ -206,12 +208,13 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      //glEnable(GL_MULTISAMPLE);
      static GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
      glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-    */
+
+    std::cerr << "context " << context() << " is valid " << context()->isValid() << std::endl;
      program = new QGLShaderProgram(context());
 
      program->addShaderFromSourceCode(QGLShader::Vertex,
          "attribute highp vec4 vertex;\n"
-         "attribute mediump mat4 matrix;\n"
+         "uniform mediump mat4 matrix;\n"
          "void main(void)\n"
          "{\n"
          "   gl_Position = matrix * vertex;\n"
@@ -229,7 +232,7 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      program->bind();
 
      vertexLocation = program->attributeLocation("vertex");
-     matrixLocation = program->attributeLocation("matrix");
+     matrixLocation = program->uniformLocation("matrix");
      colorLocation = program->uniformLocation("color");
  }
 
@@ -239,12 +242,12 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
      //glLoadIdentity();
 
-     /*
+
      glTranslatef(0.0, 0.0, -10.0);
      glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
      glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
      glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
-    */
+
 
      std::cout << "paintGL called" << std::endl;
 
@@ -258,7 +261,7 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      QColor color(0, 255, 0, 255);
 
      QMatrix4x4 pmvMatrix;
-     pmvMatrix.ortho(rect());
+     //pmvMatrix.ortho(rect());
 
      program->enableAttributeArray(vertexLocation);
      program->setAttributeArray(vertexLocation, triangleVertices, 3);
@@ -274,16 +277,16 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
  {
      //int side = qMin(width, height);
      //glViewport((width - side) / 2, (height - side) / 2, side, side);
-     /*
+
     glViewport(0, 0, width, height);
 
 
      glMatrixMode(GL_PROJECTION);
      glLoadIdentity();
-     glOrtho(-500.5, +500.5, -500.5, +500.5, 0.0, 150.0);
+     glOrtho(-500.5, +500.5, -500.5, +500.5, -10.0, 150.0);
 
      glMatrixMode(GL_MODELVIEW);
-     */
+
  }
 
  void VolumeRenderer::mousePressEvent(QMouseEvent *event)
