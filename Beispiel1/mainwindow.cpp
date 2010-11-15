@@ -88,8 +88,19 @@ void MainWindow::update_slicing_view()
     // set view size to natural size of volume so image isn't scaled
     if (volume)
     {
-        ui->slicingView->setMinimumSize(volume->GetWidth(), volume->GetHeight());
-        ui->slicingView->setMaximumSize(volume->GetWidth(), volume->GetHeight());
+        int idx = ui->slicingComboBox->currentIndex();
+        int scale = 2;
+        if (idx == 0) { // X Axis
+            ui->slicingView->setMinimumSize(volume->GetDepth()*scale, volume->GetHeight()*scale);
+            ui->slicingView->setMaximumSize(volume->GetDepth()*scale, volume->GetHeight()*scale);
+        } else if (idx == 1) { // Y Axis
+            ui->slicingView->setMinimumSize(volume->GetWidth()*scale, volume->GetDepth()*scale);
+            ui->slicingView->setMaximumSize(volume->GetWidth()*scale, volume->GetDepth()*scale);
+        } else if (idx == 2) { // Z Axis
+            ui->slicingView->setMinimumSize(volume->GetWidth()*scale, volume->GetHeight()*scale);
+            ui->slicingView->setMaximumSize(volume->GetWidth()*scale, volume->GetHeight()*scale);
+        }
+
     }
     ui->slicingView->repaint();
 }
