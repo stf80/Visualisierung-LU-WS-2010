@@ -141,9 +141,12 @@
      QPoint lastPos;
  private:
      QGLShaderProgram *program;
-     int vertexLocation;
-     int matrixLocation;
-     int colorLocation;
+     int vertexLocation, texCoordLocation;
+     int n0Location, uLocation, vLocation;
+     int NLocation, volumeSizeLocation, volumeResolutionLocation;
+
+
+     int width, height; // witdh and height of viewport
 
  };
 

@@ -48,3 +48,6 @@ include($$SHARED_FOLDER/shared.pri)
 INCLUDEPATH += ../Beispiel1/framework
 
 # RESOURCES += gradients.qrc
+
+OTHER_FILES += \
+    FragmentShader.glsl

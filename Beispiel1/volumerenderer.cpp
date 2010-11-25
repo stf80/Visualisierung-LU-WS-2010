@@ -195,6 +195,9 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      std::cerr << "Widget is valid: " << isValid() << std::endl;
      std::cerr << "context " << QGLContext::currentContext() << std::endl;
      std::cerr << "has OpenGL shader: " << QGLShaderProgram::hasOpenGLShaderPrograms() << std::endl;
+     std::cerr << "context " << context() << " is valid " << context()->isValid() << std::endl;
+      program = new QGLShaderProgram(context());
+
 
 
      //qglClearColor(qtPurple.dark());
@@ -205,88 +208,112 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      glShadeModel(GL_SMOOTH);
      glEnable(GL_LIGHTING);
      glEnable(GL_LIGHT0);
-     //glEnable(GL_MULTISAMPLE);
+     glEnable(GL_MULTISAMPLE);
      static GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
      glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
-    std::cerr << "context " << context() << " is valid " << context()->isValid() << std::endl;
-     program = new QGLShaderProgram(context());
-
      program->addShaderFromSourceCode(QGLShader::Vertex,
          "attribute highp vec4 vertex;\n"
-         "uniform mediump mat4 matrix;\n"
+         "attribute vec4 texCoord;"
          "void main(void)\n"
          "{\n"
-         "   gl_Position = matrix * vertex;\n"
+         "   gl_Position = vertex;\n"
+         "  gl_TexCoord[0] = texCoord;"
          "}");
      std::cout << "Vertex shader log: " << program->log().toStdString().c_str() << std::endl;
-     program->addShaderFromSourceCode(QGLShader::Fragment,
-         "uniform mediump vec4 color;\n"
-         "void main(void)\n"
-         "{\n"
-         "   gl_FragColor = color;\n"
-         "}");
+
+     program->addShaderFromSourceFile(QGLShader::Fragment, "../Beispiel1/FragmentShader.glsl");
+
      std::cerr << "Fragment shader log: " << program->log().toStdString().c_str() << std::endl;
      program->link();
      std::cout << "Shader link log: " << program->log().toStdString().c_str() << std::endl;
      program->bind();
 
      vertexLocation = program->attributeLocation("vertex");
-     matrixLocation = program->uniformLocation("matrix");
-     colorLocation = program->uniformLocation("color");
+     texCoordLocation = program->attributeLocation("texCoord");
+
+     n0Location = program->uniformLocation(("n0"));
+     uLocation = program->uniformLocation(("u"));
+     vLocation = program->uniformLocation(("v"));
+     volumeSizeLocation = program->uniformLocation(("volumeSize"));
+     volumeResolutionLocation = program->uniformLocation(("volumeResolution"));
+     NLocation = program->uniformLocation(("N"));
  }
 
  void VolumeRenderer::paintGL()
  {
 
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-     //glLoadIdentity();
 
 
-     glTranslatef(0.0, 0.0, -10.0);
-     glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
-     glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
-     glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
+     float x = width/4, y = height/4;
+    x = 1.f; y = 1.f;
 
+     static GLfloat const quadVertices[] = {
+         x,  y, 0.0f,
+        -x,  y, 0.0f,
+        -x, -y, 0.0f,
+         x, -y, 0.0f
+    };
 
-     std::cout << "paintGL called" << std::endl;
-
-     static GLfloat const triangleVertices[] = {
-         0.0f,  0.0f,  0.0f,
-         100.0f, 0.0f, 0.0f,
-         0.0f,  100.0f, 0.0f
+     static GLfloat const texCoords[] = {
+         width / 2,  height / 2,
+        -width / 2,  height / 2,
+        -width / 2, -height / 2,
+         width / 2, -height / 2,
      };
 
-
-     QColor color(0, 255, 0, 255);
-
      QMatrix4x4 pmvMatrix;
-     //pmvMatrix.ortho(rect());
+     pmvMatrix.rotate(xRot, QVector3D(1.f, 0, 0));
+     pmvMatrix.rotate(yRot, QVector3D(0, 1.f, 0));
+     pmvMatrix.rotate(zRot, QVector3D(0, 0, 1.f));
+
+     QVector3D n0 = pmvMatrix * QVector3D(0, 0, -1.f);
+     // FIXME: keep aspect ratio
+     QVector3D u = pmvMatrix * QVector3D(1.f / width, 0, 0) * 2;
+     QVector3D v = pmvMatrix * QVector3D(0, 1.f / height, 0) * 2;
+
+     // TODO set these values from GUI
+     int N = 100;
+     QVector3D volumeSize(1.f, 1.f, 1.f);
+     QVector3D volumeResolution(10.f, 10.f, 10.f);
+
 
      program->enableAttributeArray(vertexLocation);
-     program->setAttributeArray(vertexLocation, triangleVertices, 3);
-     program->setUniformValue(matrixLocation, pmvMatrix);
-     program->setUniformValue(colorLocation, color);
+     program->setAttributeArray(vertexLocation, quadVertices, 3);
+     program->enableAttributeArray(texCoordLocation);
+     program->setAttributeArray(texCoordLocation, texCoords, 2);
 
-     glDrawArrays(GL_TRIANGLES, 0, 3);
+     program->setUniformValue(n0Location, n0);
+     program->setUniformValue(uLocation, u);
+     program->setUniformValue(vLocation, v);
+     program->setUniformValue(NLocation, N);
+     program->setUniformValue(volumeSizeLocation, volumeSize);
+     program->setUniformValue(volumeResolutionLocation, volumeResolution);
+
+     glDrawArrays(GL_QUADS, 0, 4);
 
      program->disableAttributeArray(vertexLocation);
+    program->disableAttributeArray(texCoordLocation);
  }
 
  void VolumeRenderer::resizeGL(int width, int height)
  {
-     //int side = qMin(width, height);
-     //glViewport((width - side) / 2, (height - side) / 2, side, side);
+    // int side = qMin(width, height);
+    // glViewport((width - side) / 2, (height - side) / 2, side, side);
 
     glViewport(0, 0, width, height);
 
+    this->width = width;
+    this->height = height;
 
+    /*
      glMatrixMode(GL_PROJECTION);
      glLoadIdentity();
      glOrtho(-500.5, +500.5, -500.5, +500.5, -10.0, 150.0);
 
      glMatrixMode(GL_MODELVIEW);
-
+    */
  }
 
  void VolumeRenderer::mousePressEvent(QMouseEvent *event)
@@ -299,12 +326,13 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      int dx = event->x() - lastPos.x();
      int dy = event->y() - lastPos.y();
 
+     static const float s = 1.f;
      if (event->buttons() & Qt::LeftButton) {
-         setXRotation(xRot + 8 * dy);
-         setYRotation(yRot + 8 * dx);
+         setXRotation(xRot + s * dy);
+         setYRotation(yRot + s * dx);
      } else if (event->buttons() & Qt::RightButton) {
-         setXRotation(xRot + 8 * dy);
-         setZRotation(zRot + 8 * dx);
+         setXRotation(xRot + s * dy);
+         setZRotation(zRot + s * dx);
      }
      lastPos = event->pos();
  }
