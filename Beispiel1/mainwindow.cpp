@@ -28,9 +28,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //connect(m_gradient_editor, SIGNAL(gradientStopsChanged(QGradientStops)),
     //        m_volume_renderer, SLOT(setGradientStops(QGradientStops)));
 
-    connect(ui->samplesSpinBox, SIGNAL(editingFinished()),
-            this, SLOT(updateRenderingOptions()));
-
     // Light and reflection coefficients
     m_lightColorLabel = new ColorLabel(ui->optionsGroupBox);
     ui->optionsGridLayout->addWidget(m_lightColorLabel, 0, 1);
@@ -43,6 +40,23 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_specularColorLabel = new ColorLabel(ui->optionsGroupBox);
     ui->optionsGridLayout->addWidget(m_specularColorLabel, 2, 3);
+
+    connect(ui->samplesSpinBox, SIGNAL(editingFinished()),
+            this, SLOT(updateRenderingOptions()));
+    connect(ui->k1SpinBox, SIGNAL(editingFinished()),
+            this, SLOT(updateRenderingOptions()));
+    connect(ui->k2SpinBox, SIGNAL(editingFinished()),
+            this, SLOT(updateRenderingOptions()));
+    connect(ui->exponentSpinBox, SIGNAL(editingFinished()),
+            this, SLOT(updateRenderingOptions()));
+    connect(m_lightColorLabel, SIGNAL(editingFinished()),
+            this, SLOT(updateRenderingOptions()));
+    connect(m_ambientColorLabel, SIGNAL(editingFinished()),
+            this, SLOT(updateRenderingOptions()));
+    connect(m_diffuseColorLabel, SIGNAL(editingFinished()),
+            this, SLOT(updateRenderingOptions()));
+    connect(m_specularColorLabel, SIGNAL(editingFinished()),
+            this, SLOT(updateRenderingOptions()));
 
     volume = NULL;
 
