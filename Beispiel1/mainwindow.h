@@ -8,10 +8,12 @@
 #include "colorlabel.h"
 #include "slicingview.h"
 #include "Volume.h"
+#include "renderingoptions.h"
 
 namespace Ui {
     class MainWindow;
 }
+
 
 /**
  * @brief The main window of the application. Also handles menu actions.
@@ -47,7 +49,7 @@ private slots:
      *
      * @param value
     */
-    void on_slicingScrollBar_valueChanged(int value);
+   void on_slicingScrollBar_valueChanged(int value);
     /**
      * @brief Invoked when the direction of the slicing view changes. Redraws the slicing view and resets the slicing scrollbar.
      *
@@ -80,11 +82,16 @@ private:
     Ui::MainWindow *ui; /** the main window, contains all widgets created in the form editor */
 
     Volume* volume; /** the volume to render */
+    RenderingOptions options;
 
     GradientEditor *m_gradient_editor; /** the gradient editor used to edit the transfer function */
     VolumeRenderer *m_volume_renderer; /** rendering view of the volume data */
 
     ColorLabel *m_lightColorLabel, *m_ambientColorLabel, *m_diffuseColorLabel, *m_specularColorLabel; /** ColorLabels used to select RGB rendering options */
+
+private slots:
+    void updateRenderingOptions();
+
 };
 
 #endif // MAINWINDOW_H

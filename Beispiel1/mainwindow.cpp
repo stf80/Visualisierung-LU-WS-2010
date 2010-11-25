@@ -23,8 +23,13 @@ MainWindow::MainWindow(QWidget *parent) :
     m_volume_renderer = new VolumeRenderer(ui->rendererGroupBox);
     ui->renderingLayout->addWidget(m_volume_renderer);
 
+    m_volume_renderer->setRenderingOptions(&options);
+
     //connect(m_gradient_editor, SIGNAL(gradientStopsChanged(QGradientStops)),
     //        m_volume_renderer, SLOT(setGradientStops(QGradientStops)));
+
+    connect(ui->samplesSpinBox, SIGNAL(editingFinished()),
+            this, SLOT(updateRenderingOptions()));
 
     // Light and reflection coefficients
     m_lightColorLabel = new ColorLabel(ui->optionsGroupBox);
@@ -125,6 +130,8 @@ void MainWindow::on_actionDatensatz_laden_triggered()
 
         reset_slicing_scrollbar();
         update_slicing_view();
+
+        m_volume_renderer->setVolume(volume);
         //std::cout << "Volume (" << volume->GetWidth() << "x" << volume->GetHeight() << "x" << volume->GetDepth() << ") loaded." << std::endl;
     }
 }
@@ -144,3 +151,19 @@ void MainWindow::on_slicingScrollBar_valueChanged(int value)
 {
     update_slicing_view();
 }
+
+void MainWindow::updateRenderingOptions()
+{
+    options.light = m_lightColorLabel->getColor();
+    options.ambient = m_ambientColorLabel->getColor();
+    options.diffuse = m_diffuseColorLabel->getColor();
+    options.specular = m_specularColorLabel->getColor();
+    options.k1 = ui->k1SpinBox->value();
+    options.k2 = ui->k2SpinBox->value();
+    options.exponent = ui->exponentSpinBox->value();
+    options.N = ui->samplesSpinBox->value();
+
+    m_volume_renderer->setRenderingOptions(&options);
+}
+
+

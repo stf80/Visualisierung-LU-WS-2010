@@ -8,6 +8,9 @@
 
 #include "arthurwidgets.h"
 
+#include "Volume.h"
+#include "renderingoptions.h"
+
 /****************************************************************************
  **
  ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -87,7 +90,9 @@
          QSize minimumSizeHint() const;
          QSize sizeHint() const;
 
-
+ public:
+    void setVolume(Volume* volume);
+    void setRenderingOptions(RenderingOptions *options);
 
      public slots:
          /**
@@ -147,6 +152,9 @@
 
 
      int width, height; // witdh and height of viewport
+
+     Volume *volume;
+     RenderingOptions *options;
 
  };
 

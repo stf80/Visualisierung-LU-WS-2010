@@ -8,8 +8,6 @@
 #include "volumerenderer.h"
 
 VolumeRenderer::VolumeRenderer(QWidget *parent)
-//    : ArthurFrame(parent)
-//    : QGraphicsView(parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
     transferLUT = QImage(4096, 1, QImage::Format_ARGB32);
@@ -20,7 +18,8 @@ VolumeRenderer::VolumeRenderer(QWidget *parent)
         yRot = 0;
         zRot = 0;
 
-
+    volume = 0;
+    options = 0;
 }
 
 VolumeRenderer::~VolumeRenderer()
@@ -63,34 +62,23 @@ void VolumeRenderer::setGradientStops(const QGradientStops &stops)
 
     updateTransfer();
 
-    update();
+    updateGL();
 }
 
-/*
-void VolumeRenderer::paint(QPainter *p)
+void VolumeRenderer::setVolume(Volume *volume)
 {
-    //TODO replace code with raycasting
+    this->volume = volume;
 
-    image->fill(Qt::black);
-
-    // Draw to QImage
-    for (int i = 0; i < 100; ++i)
-    {
-        image->setPixel(i, i, qRgb(i, i, i));
-    }
-
-    // Draw Qimage to QPaintDevice
-    p->drawImage(0, 0, *image);
+    updateGL();
 }
 
-void VolumeRenderer::paintEvent(QPaintEvent *e)
+void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
 {
-    // Use this widget as paint device
-    QPainter painter(this);
+    this->options = options;
 
-    paint(&painter);
+    updateGL();
 }
-*/
+
 
 /****************************************************************************
  **
@@ -242,9 +230,10 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
 
  void VolumeRenderer::paintGL()
  {
-
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+     if (! volume || ! options)
+         return;
 
      float x = width/4, y = height/4;
     x = 1.f; y = 1.f;
@@ -274,10 +263,15 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      QVector3D v = pmvMatrix * QVector3D(0, 1.f / height, 0) * 2;
 
      // TODO set these values from GUI
-     int N = 100;
-     QVector3D volumeSize(1.f, 1.f, 1.f);
-     QVector3D volumeResolution(10.f, 10.f, 10.f);
+     QVector3D volumeResolution(volume->GetWidth(), volume->GetHeight(), volume->GetDepth());
 
+     QVector3D volumeSize(volumeResolution);
+     float max = volumeSize.x();
+     if (volumeSize.y() > max)
+         max = volumeSize.y();
+     if (volumeSize.z() > max)
+         max = volumeSize.z();
+    volumeSize *= 1 / max;
 
      program->enableAttributeArray(vertexLocation);
      program->setAttributeArray(vertexLocation, quadVertices, 3);
@@ -287,7 +281,7 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      program->setUniformValue(n0Location, n0);
      program->setUniformValue(uLocation, u);
      program->setUniformValue(vLocation, v);
-     program->setUniformValue(NLocation, N);
+     program->setUniformValue(NLocation, options->N);
      program->setUniformValue(volumeSizeLocation, volumeSize);
      program->setUniformValue(volumeResolutionLocation, volumeResolution);
 

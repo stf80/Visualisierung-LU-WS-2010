@@ -21,9 +21,15 @@ public:
     */
     explicit ColorLabel(QWidget *parent = 0);
 
+    QColor getColor();
+
 signals:
+    void editingFinished();
 
 public slots:
+
+private:
+    QColor color;
 
 private slots:
     /**
