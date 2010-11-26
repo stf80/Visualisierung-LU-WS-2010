@@ -2,8 +2,16 @@
 #include <QtGui>
 #include <QtOpenGL>
 
+/*//#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include "GL/wglext.h"
+*/
+#include "GL/glext.h"
+
 #include <math.h>
 #include <iostream>
+
 
 #include "volumerenderer.h"
 
@@ -68,6 +76,34 @@ void VolumeRenderer::setGradientStops(const QGradientStops &stops)
 void VolumeRenderer::setVolume(Volume *volume)
 {
     this->volume = volume;
+
+
+    GLfloat *data = new GLfloat[volume->GetSize()];
+    /*for (int i = 0; i < volume->GetWidth(); ++i)
+    {
+        for (int j = 0; j < volume->GetHeight(); ++j)
+        {
+            for (int i = 0; i < volume->GetDepth(); ++k)
+            {
+            }
+        }
+    }
+    */
+    for (int i = 0; i < volume->GetSize(); ++i)
+    {
+        data[i] = volume->Get(i).GetValue();
+    }
+
+    glBindTexture(GL_TEXTURE_3D, textureName);
+
+    glTexImage3DEXT1(GL_TEXTURE_3D, 0, GL_ALPHA,
+                 volume->GetWidth(), volume->GetHeight(), volume->GetDepth(),
+                 0, GL_ALPHA, GL_FLOAT, data);
+
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+    delete[] data;
 
     updateGL();
 }
@@ -226,6 +262,15 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      volumeSizeLocation = program->uniformLocation(("volumeSize"));
      volumeResolutionLocation = program->uniformLocation(("volumeResolution"));
      NLocation = program->uniformLocation(("N"));
+    samplerLocation = program->uniformLocation(("sampler"));
+
+     // 3D texture
+     glGenTextures(1, &textureName);
+
+     //glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
+    glTexImage3DEXT1 = (PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT");
+
+
  }
 
  void VolumeRenderer::paintGL()
@@ -262,7 +307,6 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      QVector3D u = pmvMatrix * QVector3D(1.f / width, 0, 0) * 2;
      QVector3D v = pmvMatrix * QVector3D(0, 1.f / height, 0) * 2;
 
-     // TODO set these values from GUI
      QVector3D volumeResolution(volume->GetWidth(), volume->GetHeight(), volume->GetDepth());
 
      QVector3D volumeSize(volumeResolution);
@@ -284,6 +328,9 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      program->setUniformValue(NLocation, options->N);
      program->setUniformValue(volumeSizeLocation, volumeSize);
      program->setUniformValue(volumeResolutionLocation, volumeResolution);
+    program->setUniformValue(samplerLocation, 0);
+
+    glBindTexture(GL_TEXTURE_3D, textureName);
 
      glDrawArrays(GL_QUADS, 0, 4);
 

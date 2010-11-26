@@ -53,3 +53,4 @@ INCLUDEPATH += ../Beispiel1/framework
 
 OTHER_FILES += \
     FragmentShader.glsl
+

@@ -5,6 +5,7 @@
 #include <QtOpenGL>
 #include <QGLWidget>
 
+#include "GL/glext.h"
 
 #include "arthurwidgets.h"
 
@@ -149,12 +150,15 @@
      int vertexLocation, texCoordLocation;
      int n0Location, uLocation, vLocation;
      int NLocation, volumeSizeLocation, volumeResolutionLocation;
-
+     int samplerLocation;
 
      int width, height; // witdh and height of viewport
 
      Volume *volume;
      RenderingOptions *options;
+     GLuint textureName;
+
+     PFNGLTEXIMAGE3DEXTPROC glTexImage3DEXT1;
 
  };
 

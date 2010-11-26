@@ -22,6 +22,7 @@ uniform vec3 n0, u, v;
 uniform vec3 volumeSize; // size of volume data
 uniform vec3 volumeResolution; // number of sample points in volume data
 uniform int N;
+uniform sampler3D sampler;
 
 void main(void)
 {
@@ -45,23 +46,29 @@ void main(void)
             continue;
         }
 
+        // interpolate density value
+        vec3 tmp = sampleLocation + volumeExtent;
+        vec3 tex3DCoord = vec3(tmp.x / volumeSize.x, tmp.y / volumeSize.y, tmp.z / volumeSize.z);
+
+        vec4 density = texture3D(sampler, tex3DCoord);
+
         // calculate grid cell for sample location and relative location within cell.
         // for N data values along a unit axis there are N-1 grid cells.
         // points on boundary planes between grid cells always belong to the cell with the lower index.
         ivec3 gridCell;
         vec3 locationInCell;
 
-        vec3 tmp = sampleLocation + volumeExtent;
+        tmp = sampleLocation + volumeExtent;
         tmp *= volumeSize * volumeResolution;
 
         gridCell = ivec3(floor(tmp));
         locationInCell = tmp - vec3(gridCell);
 
-        // TODO: interpolate density value and calculate gradient/normal in cell
+        // TODO: calculate gradient/normal in cell
         vec3 sampleNormal; // estimated normal at sample point
 
         // TODO: map density value to color and opacity using transfer function
-        vec4 sampleColor = vec4(locationInCell, 0.1f); // color and opacity of sample
+        vec4 sampleColor = vec4(1, 1, 1, density.a); // color and opacity of sample
 
         // TODO: calculate final fragment color with shading
                //
