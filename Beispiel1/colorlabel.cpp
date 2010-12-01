@@ -11,12 +11,21 @@ ColorLabel::ColorLabel(QWidget *parent) :
 
 void ColorLabel::setColor()
 {
-    QColor color = QColorDialog::getColor(Qt::green, this);
-    if (color.isValid()) {
-        setText(color.name());
-        setPalette(QPalette(color));
+    QColor c = QColorDialog::getColor(Qt::green, this);
+    if (c.isValid()) {
+        setText(c.name());
+        setPalette(QPalette(c));
         setAutoFillBackground(true);
+
+        color = c;
+
+        emit editingFinished();
     }
+}
+
+QColor ColorLabel::getColor()
+{
+    return color;
 }
 
 void ColorLabel::mousePressEvent(QMouseEvent *e)

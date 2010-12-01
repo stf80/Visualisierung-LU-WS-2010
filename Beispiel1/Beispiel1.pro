@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     gradients/arthurstyle.cpp \
     gradients/hoverpoints.cpp \
     colorlabel.cpp \
-    slicingview.cpp
+    slicingview.cpp \
+    renderingoptions.cpp
 
 HEADERS  += mainwindow.h \
     volumerenderer.h \
@@ -35,7 +36,8 @@ HEADERS  += mainwindow.h \
     gradients/arthurstyle.h \
     gradients/hoverpoints.h \
     colorlabel.h \
-    slicingview.h
+    slicingview.h \
+    renderingoptions.h
 
 FORMS    += mainwindow.ui
 
@@ -48,3 +50,7 @@ SHARED_FOLDER = ../Beispiel1/gradients
 INCLUDEPATH += ../Beispiel1/framework
 
 # RESOURCES += gradients.qrc
+
+OTHER_FILES += \
+    FragmentShader.glsl
+

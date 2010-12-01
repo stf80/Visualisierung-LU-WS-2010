@@ -5,8 +5,12 @@
 #include <QtOpenGL>
 #include <QGLWidget>
 
+#include "GL/glext.h"
 
 #include "arthurwidgets.h"
+
+#include "Volume.h"
+#include "renderingoptions.h"
 
 /****************************************************************************
  **
@@ -87,7 +91,9 @@
          QSize minimumSizeHint() const;
          QSize sizeHint() const;
 
-
+ public:
+    void setVolume(Volume* volume);
+    void setRenderingOptions(RenderingOptions *options);
 
      public slots:
          /**
@@ -141,9 +147,18 @@
      QPoint lastPos;
  private:
      QGLShaderProgram *program;
-     int vertexLocation;
-     int matrixLocation;
-     int colorLocation;
+     int vertexLocation, texCoordLocation;
+     int n0Location, uLocation, vLocation;
+     int NLocation, volumeSizeLocation, volumeResolutionLocation;
+     int samplerLocation;
+
+     int width, height; // witdh and height of viewport
+
+     Volume *volume;
+     RenderingOptions *options;
+     GLuint textureName;
+
+     PFNGLTEXIMAGE3DEXTPROC glTexImage3DEXT1;
 
  };
 

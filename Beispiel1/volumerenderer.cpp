@@ -2,14 +2,20 @@
 #include <QtGui>
 #include <QtOpenGL>
 
+/*//#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include "GL/wglext.h"
+*/
+#include "GL/glext.h"
+
 #include <math.h>
 #include <iostream>
+
 
 #include "volumerenderer.h"
 
 VolumeRenderer::VolumeRenderer(QWidget *parent)
-//    : ArthurFrame(parent)
-//    : QGraphicsView(parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
     transferLUT = QImage(4096, 1, QImage::Format_ARGB32);
@@ -20,7 +26,8 @@ VolumeRenderer::VolumeRenderer(QWidget *parent)
         yRot = 0;
         zRot = 0;
 
-
+    volume = 0;
+    options = 0;
 }
 
 VolumeRenderer::~VolumeRenderer()
@@ -63,34 +70,51 @@ void VolumeRenderer::setGradientStops(const QGradientStops &stops)
 
     updateTransfer();
 
-    update();
+    updateGL();
 }
 
-/*
-void VolumeRenderer::paint(QPainter *p)
+void VolumeRenderer::setVolume(Volume *volume)
 {
-    //TODO replace code with raycasting
+    this->volume = volume;
 
-    image->fill(Qt::black);
 
-    // Draw to QImage
-    for (int i = 0; i < 100; ++i)
+    GLfloat *data = new GLfloat[volume->GetSize()];
+    /*for (int i = 0; i < volume->GetWidth(); ++i)
     {
-        image->setPixel(i, i, qRgb(i, i, i));
+        for (int j = 0; j < volume->GetHeight(); ++j)
+        {
+            for (int i = 0; i < volume->GetDepth(); ++k)
+            {
+            }
+        }
+    }
+    */
+    for (int i = 0; i < volume->GetSize(); ++i)
+    {
+        data[i] = volume->Get(i).GetValue();
     }
 
-    // Draw Qimage to QPaintDevice
-    p->drawImage(0, 0, *image);
+    glBindTexture(GL_TEXTURE_3D, textureName);
+
+    glTexImage3DEXT1(GL_TEXTURE_3D, 0, GL_ALPHA,
+                 volume->GetWidth(), volume->GetHeight(), volume->GetDepth(),
+                 0, GL_ALPHA, GL_FLOAT, data);
+
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+    delete[] data;
+
+    updateGL();
 }
 
-void VolumeRenderer::paintEvent(QPaintEvent *e)
+void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
 {
-    // Use this widget as paint device
-    QPainter painter(this);
+    this->options = options;
 
-    paint(&painter);
+    updateGL();
 }
-*/
+
 
 /****************************************************************************
  **
@@ -195,6 +219,9 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      std::cerr << "Widget is valid: " << isValid() << std::endl;
      std::cerr << "context " << QGLContext::currentContext() << std::endl;
      std::cerr << "has OpenGL shader: " << QGLShaderProgram::hasOpenGLShaderPrograms() << std::endl;
+     std::cerr << "context " << context() << " is valid " << context()->isValid() << std::endl;
+      program = new QGLShaderProgram(context());
+
 
 
      //qglClearColor(qtPurple.dark());
@@ -205,88 +232,129 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      glShadeModel(GL_SMOOTH);
      glEnable(GL_LIGHTING);
      glEnable(GL_LIGHT0);
-     //glEnable(GL_MULTISAMPLE);
+     glEnable(GL_MULTISAMPLE);
      static GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
      glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
-    std::cerr << "context " << context() << " is valid " << context()->isValid() << std::endl;
-     program = new QGLShaderProgram(context());
-
      program->addShaderFromSourceCode(QGLShader::Vertex,
          "attribute highp vec4 vertex;\n"
-         "uniform mediump mat4 matrix;\n"
+         "attribute vec4 texCoord;"
          "void main(void)\n"
          "{\n"
-         "   gl_Position = matrix * vertex;\n"
+         "   gl_Position = vertex;\n"
+         "  gl_TexCoord[0] = texCoord;"
          "}");
      std::cout << "Vertex shader log: " << program->log().toStdString().c_str() << std::endl;
-     program->addShaderFromSourceCode(QGLShader::Fragment,
-         "uniform mediump vec4 color;\n"
-         "void main(void)\n"
-         "{\n"
-         "   gl_FragColor = color;\n"
-         "}");
+
+     program->addShaderFromSourceFile(QGLShader::Fragment, "../Beispiel1/FragmentShader.glsl");
+
      std::cerr << "Fragment shader log: " << program->log().toStdString().c_str() << std::endl;
      program->link();
      std::cout << "Shader link log: " << program->log().toStdString().c_str() << std::endl;
      program->bind();
 
      vertexLocation = program->attributeLocation("vertex");
-     matrixLocation = program->uniformLocation("matrix");
-     colorLocation = program->uniformLocation("color");
+     texCoordLocation = program->attributeLocation("texCoord");
+
+     n0Location = program->uniformLocation(("n0"));
+     uLocation = program->uniformLocation(("u"));
+     vLocation = program->uniformLocation(("v"));
+     volumeSizeLocation = program->uniformLocation(("volumeSize"));
+     volumeResolutionLocation = program->uniformLocation(("volumeResolution"));
+     NLocation = program->uniformLocation(("N"));
+    samplerLocation = program->uniformLocation(("sampler"));
+
+     // 3D texture
+     glGenTextures(1, &textureName);
+
+     //glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
+    glTexImage3DEXT1 = (PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT");
+
+
  }
 
  void VolumeRenderer::paintGL()
  {
-
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-     //glLoadIdentity();
 
+     if (! volume || ! options)
+         return;
 
-     glTranslatef(0.0, 0.0, -10.0);
-     glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
-     glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
-     glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
+     float x = width/4, y = height/4;
+    x = 1.f; y = 1.f;
 
+     static GLfloat const quadVertices[] = {
+         x,  y, 0.0f,
+        -x,  y, 0.0f,
+        -x, -y, 0.0f,
+         x, -y, 0.0f
+    };
 
-     std::cout << "paintGL called" << std::endl;
-
-     static GLfloat const triangleVertices[] = {
-         0.0f,  0.0f,  0.0f,
-         100.0f, 0.0f, 0.0f,
-         0.0f,  100.0f, 0.0f
+     static GLfloat const texCoords[] = {
+         width / 2,  height / 2,
+        -width / 2,  height / 2,
+        -width / 2, -height / 2,
+         width / 2, -height / 2,
      };
 
-
-     QColor color(0, 255, 0, 255);
-
      QMatrix4x4 pmvMatrix;
-     //pmvMatrix.ortho(rect());
+     pmvMatrix.rotate(xRot, QVector3D(1.f, 0, 0));
+     pmvMatrix.rotate(yRot, QVector3D(0, 1.f, 0));
+     pmvMatrix.rotate(zRot, QVector3D(0, 0, 1.f));
+
+     QVector3D n0 = pmvMatrix * QVector3D(0, 0, -1.f);
+     // FIXME: keep aspect ratio
+     QVector3D u = pmvMatrix * QVector3D(1.f / width, 0, 0) * 2;
+     QVector3D v = pmvMatrix * QVector3D(0, 1.f / height, 0) * 2;
+
+     QVector3D volumeResolution(volume->GetWidth(), volume->GetHeight(), volume->GetDepth());
+
+     QVector3D volumeSize(volumeResolution);
+     float max = volumeSize.x();
+     if (volumeSize.y() > max)
+         max = volumeSize.y();
+     if (volumeSize.z() > max)
+         max = volumeSize.z();
+    volumeSize *= 1 / max;
 
      program->enableAttributeArray(vertexLocation);
-     program->setAttributeArray(vertexLocation, triangleVertices, 3);
-     program->setUniformValue(matrixLocation, pmvMatrix);
-     program->setUniformValue(colorLocation, color);
+     program->setAttributeArray(vertexLocation, quadVertices, 3);
+     program->enableAttributeArray(texCoordLocation);
+     program->setAttributeArray(texCoordLocation, texCoords, 2);
 
-     glDrawArrays(GL_TRIANGLES, 0, 3);
+     program->setUniformValue(n0Location, n0);
+     program->setUniformValue(uLocation, u);
+     program->setUniformValue(vLocation, v);
+     program->setUniformValue(NLocation, options->N);
+     program->setUniformValue(volumeSizeLocation, volumeSize);
+     program->setUniformValue(volumeResolutionLocation, volumeResolution);
+    program->setUniformValue(samplerLocation, 0);
+
+    glBindTexture(GL_TEXTURE_3D, textureName);
+
+     glDrawArrays(GL_QUADS, 0, 4);
 
      program->disableAttributeArray(vertexLocation);
+    program->disableAttributeArray(texCoordLocation);
  }
 
  void VolumeRenderer::resizeGL(int width, int height)
  {
-     //int side = qMin(width, height);
-     //glViewport((width - side) / 2, (height - side) / 2, side, side);
+    // int side = qMin(width, height);
+    // glViewport((width - side) / 2, (height - side) / 2, side, side);
 
     glViewport(0, 0, width, height);
 
+    this->width = width;
+    this->height = height;
 
+    /*
      glMatrixMode(GL_PROJECTION);
      glLoadIdentity();
      glOrtho(-500.5, +500.5, -500.5, +500.5, -10.0, 150.0);
 
      glMatrixMode(GL_MODELVIEW);
-
+    */
  }
 
  void VolumeRenderer::mousePressEvent(QMouseEvent *event)
@@ -299,12 +367,13 @@ void VolumeRenderer::paintEvent(QPaintEvent *e)
      int dx = event->x() - lastPos.x();
      int dy = event->y() - lastPos.y();
 
+     static const float s = 1.f;
      if (event->buttons() & Qt::LeftButton) {
-         setXRotation(xRot + 8 * dy);
-         setYRotation(yRot + 8 * dx);
+         setXRotation(xRot + s * dy);
+         setYRotation(yRot + s * dx);
      } else if (event->buttons() & Qt::RightButton) {
-         setXRotation(xRot + 8 * dy);
-         setZRotation(zRot + 8 * dx);
+         setXRotation(xRot + s * dy);
+         setZRotation(zRot + s * dx);
      }
      lastPos = event->pos();
  }
