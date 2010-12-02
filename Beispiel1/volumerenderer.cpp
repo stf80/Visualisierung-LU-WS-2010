@@ -1,4 +1,4 @@
-
+#include <GL/glew.h>
 #include <QtGui>
 #include <QtOpenGL>
 
@@ -7,7 +7,7 @@
 #include <GL/glu.h>
 #include "GL/wglext.h"
 */
-#include "GL/glext.h"
+//#include "GL/glext.h"
 
 #include <math.h>
 #include <iostream>
@@ -96,9 +96,12 @@ void VolumeRenderer::setVolume(Volume *volume)
 
     glBindTexture(GL_TEXTURE_3D, textureName);
 
-    glTexImage3DEXT1(GL_TEXTURE_3D, 0, GL_ALPHA,
+    /*glTexImage3DEXT1(GL_TEXTURE_3D, 0, GL_ALPHA,
                  volume->GetWidth(), volume->GetHeight(), volume->GetDepth(),
-                 0, GL_ALPHA, GL_FLOAT, data);
+                 0, GL_ALPHA, GL_FLOAT, data);*/
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_ALPHA,
+                     volume->GetWidth(), volume->GetHeight(), volume->GetDepth(),
+                     0, GL_ALPHA, GL_FLOAT, data);
 
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -216,6 +219,7 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
 
  void VolumeRenderer::initializeGL()
  {
+     glewInit();
      std::cerr << "Widget is valid: " << isValid() << std::endl;
      std::cerr << "context " << QGLContext::currentContext() << std::endl;
      std::cerr << "has OpenGL shader: " << QGLShaderProgram::hasOpenGLShaderPrograms() << std::endl;
@@ -256,19 +260,23 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      vertexLocation = program->attributeLocation("vertex");
      texCoordLocation = program->attributeLocation("texCoord");
 
-     n0Location = program->uniformLocation(("n0"));
-     uLocation = program->uniformLocation(("u"));
-     vLocation = program->uniformLocation(("v"));
-     volumeSizeLocation = program->uniformLocation(("volumeSize"));
-     volumeResolutionLocation = program->uniformLocation(("volumeResolution"));
-     NLocation = program->uniformLocation(("N"));
-    samplerLocation = program->uniformLocation(("sampler"));
+     n0Location = program->uniformLocation("n0");
+     uLocation = program->uniformLocation("u");
+     vLocation = program->uniformLocation("v");
+     volumeSizeLocation = program->uniformLocation("volumeSize");
+     volumeResolutionLocation = program->uniformLocation("volumeResolution");
+     NLocation = program->uniformLocation("N");
+     samplerLocation = program->uniformLocation("sampler");
+     ambientColorLocation = program->uniformLocation("c_ambient");
+     diffuseColorLocation = program->uniformLocation("c_diffuse");
+     specularColorLocation = program->uniformLocation("c_specular");
+     specularExponentLocation = program->uniformLocation("c_exponent");
 
      // 3D texture
      glGenTextures(1, &textureName);
 
      //glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
-    glTexImage3DEXT1 = (PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT");
+    //glTexImage3DEXT1 = (PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT");
 
 
  }
@@ -315,7 +323,7 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
          max = volumeSize.y();
      if (volumeSize.z() > max)
          max = volumeSize.z();
-    volumeSize *= 1 / max;
+     volumeSize *= 1 / max;
 
      program->enableAttributeArray(vertexLocation);
      program->setAttributeArray(vertexLocation, quadVertices, 3);
@@ -328,14 +336,18 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      program->setUniformValue(NLocation, options->N);
      program->setUniformValue(volumeSizeLocation, volumeSize);
      program->setUniformValue(volumeResolutionLocation, volumeResolution);
-    program->setUniformValue(samplerLocation, 0);
+     program->setUniformValue(samplerLocation, 0);
+     program->setUniformValue(ambientColorLocation, options->ambient);
+     program->setUniformValue(diffuseColorLocation, options->diffuse);
+     program->setUniformValue(specularColorLocation, options->specular);
+     program->setUniformValue(specularExponentLocation, options->exponent);
 
-    glBindTexture(GL_TEXTURE_3D, textureName);
+     glBindTexture(GL_TEXTURE_3D, textureName);
 
      glDrawArrays(GL_QUADS, 0, 4);
 
      program->disableAttributeArray(vertexLocation);
-    program->disableAttributeArray(texCoordLocation);
+     program->disableAttributeArray(texCoordLocation);
  }
 
  void VolumeRenderer::resizeGL(int width, int height)

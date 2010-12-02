@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     gradients/hoverpoints.cpp \
     colorlabel.cpp \
     slicingview.cpp \
-    renderingoptions.cpp
+    renderingoptions.cpp \
+    glew.c
 
 HEADERS  += mainwindow.h \
     volumerenderer.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     gradients/hoverpoints.h \
     colorlabel.h \
     slicingview.h \
-    renderingoptions.h
+    renderingoptions.h \
+    GL/glew.h
 
 FORMS    += mainwindow.ui
 
@@ -53,4 +55,3 @@ INCLUDEPATH += ../Beispiel1/framework
 
 OTHER_FILES += \
     FragmentShader.glsl
-

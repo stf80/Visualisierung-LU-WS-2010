@@ -179,5 +179,3 @@ void MainWindow::updateRenderingOptions()
 
     m_volume_renderer->setRenderingOptions(&options);
 }
-
-

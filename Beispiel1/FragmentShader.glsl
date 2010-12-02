@@ -22,23 +22,30 @@ uniform vec3 n0, u, v;
 uniform vec3 volumeSize; // size of volume data
 uniform vec3 volumeResolution; // number of sample points in volume data
 uniform int N;
+
 uniform sampler3D sampler;
+uniform sampler1D transfer;
+
+uniform vec4 c_ambient;
+uniform vec4 c_diffuse;
+uniform vec4 c_specular;
+uniform float c_exponent;
 
 void main(void)
 {
-    vec3 center = n0 * sqrt(3);
-    vec3 sampleDistance = n0 * 2 * sqrt(3) / (N - 1);
+    vec3 center = n0 * sqrt(3.0);
+    vec3 sampleDistance = n0 * 2.0 * sqrt(3.0) / float(N - 1);
     vec3 sampleLocation = center + u * gl_TexCoord[0].x + v * gl_TexCoord[0].y;
 
     // set background color
-    gl_FragColor = vec4(0,0,0,1.f);
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 
     // Render samples back-to-front
     for (int i = N-1; i >= 0; --i, sampleLocation -= sampleDistance)
     {
 
         // if sample location is outside volume, continue (opacity will be 0)
-        vec3 volumeExtent = volumeSize * 0.5f;
+        vec3 volumeExtent = volumeSize * 0.5;
         if (abs(sampleLocation.x) >= volumeExtent.x
             || abs(sampleLocation.y) >= volumeExtent.y
             || abs(sampleLocation.z) >= volumeExtent.z)
@@ -65,15 +72,28 @@ void main(void)
         locationInCell = tmp - vec3(gridCell);
 
         // TODO: calculate gradient/normal in cell
-        vec3 sampleNormal; // estimated normal at sample point
+        float dx = texture3D(sampler, vec3(tex3DCoord.xyz + vec3(0.001, 0.0, 0.0))).a - texture3D(sampler, vec3(tex3DCoord.xyz - vec3(0.001, 0.0, 0.0))).a;
+        float dy = texture3D(sampler, vec3(tex3DCoord.xyz + vec3(0.0, 0.001, 0.0))).a - texture3D(sampler, vec3(tex3DCoord.xyz - vec3(0.0, 0.001, 0.0))).a;
+        float dz = texture3D(sampler, vec3(tex3DCoord.xyz + vec3(0.0, 0.0, 0.001))).a - texture3D(sampler, vec3(tex3DCoord.xyz - vec3(0.0, 0.0, 0.001))).a;
+        vec3 N = normalize(vec3(dx, dy, dz)); // approx normal vector
+        vec3 L = normalize(gl_LightSource[0].position.xyz); // vector to light source
+        vec3 V = normalize(n0); // vector to observer
+        vec3 H = normalize(V + L);
 
         // TODO: map density value to color and opacity using transfer function
-        vec4 sampleColor = vec4(1, 1, 1, density.a); // color and opacity of sample
+        //vec4 transferColor = texture1D(transfer, density.a);
+        //vec4 sampleColor = vec4(transferColor.xyz, transferColor.a * density.a); // color and opacity of sample
+        vec4 sampleColor = vec4(1.0, 1.0, 1.0, density.a);
 
         // TODO: calculate final fragment color with shading
-               //
+        //vec4 shadingColor = c_ambient + c_diffuse*max(dot(N,L), 0.0);
+        vec4 shadingColor = c_ambient + c_diffuse*max(dot(N,L), 0.0) + c_specular*max(pow(dot(N,H),c_exponent),0.0);
+        //vec4 shadingColor = vec4(N.xyz, 1.0);
+
+        vec4 finalColor = sampleColor*shadingColor;
 
         // Blend
-        gl_FragColor = vec4(sampleColor.a * sampleColor.rgb + (1 - sampleColor.a) * gl_FragColor.rgb, 1);
+        //gl_FragColor = vec4(sampleColor.a * sampleColor.rgb + (1.0 - sampleColor.a) * gl_FragColor.rgb, 1.0);
+        gl_FragColor = vec4(sampleColor.a * finalColor.rgb + (1.0 - sampleColor.a) * gl_FragColor.rgb, 1.0);
     }
 }

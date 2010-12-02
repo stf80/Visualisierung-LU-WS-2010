@@ -151,6 +151,10 @@
      int n0Location, uLocation, vLocation;
      int NLocation, volumeSizeLocation, volumeResolutionLocation;
      int samplerLocation;
+     int ambientColorLocation;
+     int diffuseColorLocation;
+     int specularColorLocation;
+     int specularExponentLocation;
 
      int width, height; // witdh and height of viewport
 
