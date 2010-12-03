@@ -96,12 +96,10 @@ void VolumeRenderer::setVolume(Volume *volume)
 
     glBindTexture(GL_TEXTURE_3D, textureName);
 
-    /*glTexImage3DEXT1(GL_TEXTURE_3D, 0, GL_ALPHA,
+    glTexImage3DEXT1(GL_TEXTURE_3D, 0, GL_ALPHA,
+//    glTexImage3D(GL_TEXTURE_3D, 0, GL_ALPHA,
                  volume->GetWidth(), volume->GetHeight(), volume->GetDepth(),
-                 0, GL_ALPHA, GL_FLOAT, data);*/
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_ALPHA,
-                     volume->GetWidth(), volume->GetHeight(), volume->GetDepth(),
-                     0, GL_ALPHA, GL_FLOAT, data);
+                 0, GL_ALPHA, GL_FLOAT, data);
 
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -219,7 +217,7 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
 
  void VolumeRenderer::initializeGL()
  {
-     glewInit();
+     //glewInit();
      std::cerr << "Widget is valid: " << isValid() << std::endl;
      std::cerr << "context " << QGLContext::currentContext() << std::endl;
      std::cerr << "has OpenGL shader: " << QGLShaderProgram::hasOpenGLShaderPrograms() << std::endl;
@@ -276,7 +274,7 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      glGenTextures(1, &textureName);
 
      //glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
-    //glTexImage3DEXT1 = (PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT");
+    glTexImage3DEXT1 = (PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT");
 
 
  }
