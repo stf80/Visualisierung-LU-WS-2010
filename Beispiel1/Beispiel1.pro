@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     gradients/hoverpoints.cpp \
     colorlabel.cpp \
     slicingview.cpp \
-    renderingoptions.cpp
+    renderingoptions.cpp \
+    glew.c
 
 HEADERS  += mainwindow.h \
     volumerenderer.h \

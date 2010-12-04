@@ -274,7 +274,7 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      glGenTextures(1, &textureName);
 
      //glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
-    glTexImage3DEXT1 = (PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT");
+    //glTexImage3DEXT1 = (PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT");
 
 
  }
