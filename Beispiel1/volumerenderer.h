@@ -93,6 +93,7 @@
 
  public:
     void setVolume(Volume* volume);
+    void setTransfer();
     void setRenderingOptions(RenderingOptions *options);
 
      public slots:
@@ -124,7 +125,7 @@
 
      QImage *image; /** Stores the rendered image. */
 
-     QImage transferLUT; /** Stores a look-up table for the transfer function. Contains RGBA values. The resolution is 1x4096 pixels. */
+     QImage transferLUT; /** Stores a look-up table for the transfer function. Contains RGBA values. The resolution is 1024x1 pixels. */
 
      /**
       * @brief Maps density values to RGBA colors using the transfer look-up table.
@@ -155,12 +156,14 @@
      int diffuseColorLocation;
      int specularColorLocation;
      int specularExponentLocation;
+     int transferLocation;
 
      int width, height; // witdh and height of viewport
 
      Volume *volume;
      RenderingOptions *options;
      GLuint textureName;
+     GLuint transferTextureName;
 
      PFNGLTEXIMAGE3DEXTPROC glTexImage3DEXT1;
 

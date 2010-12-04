@@ -91,7 +91,7 @@ private:
 
 private slots:
     void updateRenderingOptions();
-
+    void updateTransferFunction();
 };
 
 #endif // MAINWINDOW_H

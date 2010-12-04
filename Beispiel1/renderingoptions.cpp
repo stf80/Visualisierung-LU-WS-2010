@@ -11,5 +11,4 @@ RenderingOptions::RenderingOptions()
         k2 = 1;
         exponent = 16.0;
         N = 100;
-
 }

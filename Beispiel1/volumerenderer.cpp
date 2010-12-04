@@ -18,7 +18,7 @@
 VolumeRenderer::VolumeRenderer(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-    transferLUT = QImage(4096, 1, QImage::Format_ARGB32);
+    transferLUT = QImage(1024, 1, QImage::Format_ARGB32);
 
     image = new QImage(100, 100, QImage::Format_RGB32);
 
@@ -94,10 +94,11 @@ void VolumeRenderer::setVolume(Volume *volume)
         data[i] = volume->Get(i).GetValue();
     }
 
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_3D, textureName);
 
-    glTexImage3DEXT1(GL_TEXTURE_3D, 0, GL_ALPHA,
-//    glTexImage3D(GL_TEXTURE_3D, 0, GL_ALPHA,
+    //glTexImage3DEXT1(GL_TEXTURE_3D, 0, GL_ALPHA,
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_ALPHA,
                  volume->GetWidth(), volume->GetHeight(), volume->GetDepth(),
                  0, GL_ALPHA, GL_FLOAT, data);
 
@@ -107,6 +108,25 @@ void VolumeRenderer::setVolume(Volume *volume)
     delete[] data;
 
     updateGL();
+}
+
+void VolumeRenderer::setTransfer()
+{
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_1D, transferTextureName);
+
+    GLuint *data = new GLuint(transferLUT.width());
+    for (int i=0; i<transferLUT.width(); i++) {
+        QRgb pixel = transferLUT.pixel(i, 0);
+        GLuint pixel_t = (pixel>>24) | (pixel<<8);
+        data[i] = pixel_t;
+    }
+
+    std::cerr << transferLUT.width();
+
+    glTexImage1D(GL_TEXTURE_1D, 0, 4, transferLUT.width(), 0, GL_RGBA, GL_UNSIGNED_INT, data);
+
+    delete[] data;
 }
 
 void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
@@ -217,7 +237,7 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
 
  void VolumeRenderer::initializeGL()
  {
-     //glewInit();
+     glewInit();
      std::cerr << "Widget is valid: " << isValid() << std::endl;
      std::cerr << "context " << QGLContext::currentContext() << std::endl;
      std::cerr << "has OpenGL shader: " << QGLShaderProgram::hasOpenGLShaderPrograms() << std::endl;
@@ -235,6 +255,8 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      glEnable(GL_LIGHTING);
      glEnable(GL_LIGHT0);
      glEnable(GL_MULTISAMPLE);
+     glEnable(GL_TEXTURE_1D);
+     glEnable(GL_TEXTURE_3D);
      static GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
      glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
@@ -269,9 +291,11 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      diffuseColorLocation = program->uniformLocation("c_diffuse");
      specularColorLocation = program->uniformLocation("c_specular");
      specularExponentLocation = program->uniformLocation("c_exponent");
+     transferLocation = program->uniformLocation("transfer");
 
      // 3D texture
      glGenTextures(1, &textureName);
+     glGenTextures(1, &transferTextureName);
 
      //glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
     //glTexImage3DEXT1 = (PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT");
@@ -339,8 +363,12 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      program->setUniformValue(diffuseColorLocation, options->diffuse);
      program->setUniformValue(specularColorLocation, options->specular);
      program->setUniformValue(specularExponentLocation, options->exponent);
+     program->setUniformValue(transferLocation, 1);
 
+     glActiveTexture(GL_TEXTURE0);
      glBindTexture(GL_TEXTURE_3D, textureName);
+     glActiveTexture(GL_TEXTURE1);
+     glBindTexture(GL_TEXTURE_1D, transferTextureName);
 
      glDrawArrays(GL_QUADS, 0, 4);
 

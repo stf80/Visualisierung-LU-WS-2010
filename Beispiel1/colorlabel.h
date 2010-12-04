@@ -22,6 +22,7 @@ public:
     explicit ColorLabel(QWidget *parent = 0);
 
     QColor getColor();
+    void setColor(QColor color);
 
 signals:
     void editingFinished();

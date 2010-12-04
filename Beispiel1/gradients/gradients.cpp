@@ -237,6 +237,41 @@ void GradientEditor::pointsUpdated()
     emit gradientStopsChanged(stops);
 }
 
+const QGradientStops& GradientEditor::getGradientStops()
+{
+    qreal w = m_alpha_shade->width();
+
+    static QGradientStops stops;
+
+    stops.clear();
+
+    QPolygonF points;
+
+    points += m_red_shade->points();
+    points += m_green_shade->points();
+    points += m_blue_shade->points();
+    points += m_alpha_shade->points();
+
+    qSort(points.begin(), points.end(), x_less_than);
+
+    for (int i=0; i<points.size(); ++i) {
+        qreal x = int(points.at(i).x());
+        if (i < points.size() - 1 && x == points.at(i+1).x())
+            continue;
+        QColor color((0x00ff0000 & m_red_shade->colorAt(int(x))) >> 16,
+                     (0x0000ff00 & m_green_shade->colorAt(int(x))) >> 8,
+                     (0x000000ff & m_blue_shade->colorAt(int(x))),
+                     (0xff000000 & m_alpha_shade->colorAt(int(x))) >> 24);
+
+        if (x / w > 1)
+            break;
+
+        stops << QGradientStop(x / w, color);
+    }
+
+    return stops;
+}
+
 
 static void set_shade_points(const QPolygonF &points, ShadeWidget *shade)
 {

@@ -30,16 +30,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Light and reflection coefficients
     m_lightColorLabel = new ColorLabel(ui->optionsGroupBox);
+    m_lightColorLabel->setColor(options.light);
     ui->optionsGridLayout->addWidget(m_lightColorLabel, 0, 1);
 
     m_ambientColorLabel = new ColorLabel(ui->optionsGroupBox);
+    m_ambientColorLabel->setColor(options.ambient);
     ui->optionsGridLayout->addWidget(m_ambientColorLabel, 0, 3);
 
     m_diffuseColorLabel = new ColorLabel(ui->optionsGroupBox);
+    m_diffuseColorLabel->setColor(options.diffuse);
     ui->optionsGridLayout->addWidget(m_diffuseColorLabel, 1, 3);
 
     m_specularColorLabel = new ColorLabel(ui->optionsGroupBox);
+    m_specularColorLabel->setColor(options.specular);
     ui->optionsGridLayout->addWidget(m_specularColorLabel, 2, 3);
+
+    ui->exponentSpinBox->setValue(options.exponent);
 
     connect(ui->samplesSpinBox, SIGNAL(editingFinished()),
             this, SLOT(updateRenderingOptions()));
@@ -57,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(updateRenderingOptions()));
     connect(m_specularColorLabel, SIGNAL(editingFinished()),
             this, SLOT(updateRenderingOptions()));
+    connect(m_gradient_editor, SIGNAL(gradientStopsChanged(QGradientStops)),
+            this, SLOT(updateTransferFunction()));
 
     volume = NULL;
 
@@ -178,4 +186,10 @@ void MainWindow::updateRenderingOptions()
     options.N = ui->samplesSpinBox->value();
 
     m_volume_renderer->setRenderingOptions(&options);
+}
+
+void MainWindow::updateTransferFunction()
+{
+    m_volume_renderer->setGradientStops(m_gradient_editor->getGradientStops());
+    m_volume_renderer->setTransfer();
 }

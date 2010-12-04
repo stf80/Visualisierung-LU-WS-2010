@@ -92,6 +92,7 @@ public:
     GradientEditor(QWidget *parent);
 
     void setGradientStops(const QGradientStops &stops);
+    const QGradientStops& getGradientStops();
 
 public slots:
     void pointsUpdated();
