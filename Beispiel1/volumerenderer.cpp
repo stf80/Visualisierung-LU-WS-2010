@@ -49,8 +49,9 @@ void VolumeRenderer::updateTransfer()
 {
     QGradient g = QLinearGradient(QPoint(0, 0), QPoint(transferLUT.width(),0));
 
-    for (int i=0; i<m_stops.size(); ++i)
+    for (int i=0; i<m_stops.size(); ++i) {
         g.setColorAt(m_stops.at(i).first, m_stops.at(i).second);
+    }
 
     g.setSpread(QGradient::PadSpread);
 
@@ -59,7 +60,7 @@ void VolumeRenderer::updateTransfer()
     p->setBrush(g);
     p->setPen(Qt::NoPen);
 
-    p->drawRect(rect());
+    p->drawRect(transferLUT.rect());
 
     delete p;
 }
@@ -115,16 +116,19 @@ void VolumeRenderer::setTransfer()
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_1D, transferTextureName);
 
-    GLuint *data = new GLuint(transferLUT.width());
+    GLuint *data = new GLuint[transferLUT.width()];
     for (int i=0; i<transferLUT.width(); i++) {
         QRgb pixel = transferLUT.pixel(i, 0);
-        GLuint pixel_t = (pixel>>24) | (pixel<<8);
+        GLuint pixel_t = (pixel&0xff000000)
+                         | ((pixel&0x00ff0000)>>16)
+                         | (pixel&0x0000ff00)
+                         | ((pixel&0x000000ff)<<16);
         data[i] = pixel_t;
     }
 
-    std::cerr << transferLUT.width();
-
-    glTexImage1D(GL_TEXTURE_1D, 0, 4, transferLUT.width(), 0, GL_RGBA, GL_UNSIGNED_INT, data);
+    glTexImage1D(GL_TEXTURE_1D, 0, 4, transferLUT.width(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     delete[] data;
 }
@@ -242,12 +246,12 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      std::cerr << "context " << QGLContext::currentContext() << std::endl;
      std::cerr << "has OpenGL shader: " << QGLShaderProgram::hasOpenGLShaderPrograms() << std::endl;
      std::cerr << "context " << context() << " is valid " << context()->isValid() << std::endl;
-      program = new QGLShaderProgram(context());
+     program = new QGLShaderProgram(context());
 
 
 
      //qglClearColor(qtPurple.dark());
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+     glClearColor(0.0, 0.0, 0.0, 1.0);
 
      glEnable(GL_DEPTH_TEST);
      glEnable(GL_CULL_FACE);
@@ -287,11 +291,14 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      volumeResolutionLocation = program->uniformLocation("volumeResolution");
      NLocation = program->uniformLocation("N");
      samplerLocation = program->uniformLocation("sampler");
+     lightColorLocation = program->uniformLocation("c_light");
      ambientColorLocation = program->uniformLocation("c_ambient");
      diffuseColorLocation = program->uniformLocation("c_diffuse");
      specularColorLocation = program->uniformLocation("c_specular");
      specularExponentLocation = program->uniformLocation("c_exponent");
-     transferLocation = program->uniformLocation("transfer");
+     transferLocation = program->uniformLocation("transferSampler");
+     k1Location = program->uniformLocation("k1");
+     k2Location = program->uniformLocation("k2");
 
      // 3D texture
      glGenTextures(1, &textureName);
@@ -359,11 +366,14 @@ void VolumeRenderer::setRenderingOptions(RenderingOptions *options)
      program->setUniformValue(volumeSizeLocation, volumeSize);
      program->setUniformValue(volumeResolutionLocation, volumeResolution);
      program->setUniformValue(samplerLocation, 0);
+     program->setUniformValue(lightColorLocation, options->light);
      program->setUniformValue(ambientColorLocation, options->ambient);
      program->setUniformValue(diffuseColorLocation, options->diffuse);
      program->setUniformValue(specularColorLocation, options->specular);
      program->setUniformValue(specularExponentLocation, options->exponent);
      program->setUniformValue(transferLocation, 1);
+     program->setUniformValue(k1Location, options->k1);
+     program->setUniformValue(k2Location, options->k2);
 
      glActiveTexture(GL_TEXTURE0);
      glBindTexture(GL_TEXTURE_3D, textureName);

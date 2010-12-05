@@ -49,6 +49,7 @@ private slots:
      *
      * @param value
     */
+   void on_actionBild_speichern_triggered();
    void on_slicingScrollBar_valueChanged(int value);
     /**
      * @brief Invoked when the direction of the slicing view changes. Redraws the slicing view and resets the slicing scrollbar.

@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     volume = NULL;
 
     ui->slicingScrollBar->setMinimum(0);
+    updateTransferFunction();
 }
 
 MainWindow::~MainWindow()
@@ -192,4 +193,18 @@ void MainWindow::updateTransferFunction()
 {
     m_volume_renderer->setGradientStops(m_gradient_editor->getGradientStops());
     m_volume_renderer->setTransfer();
+}
+
+void MainWindow::on_actionBild_speichern_triggered()
+{
+    QString filename = QFileDialog::getSaveFileName(this, "Save image", QString(), "PNG Image (*.png)");
+    if (!filename.endsWith(".png")) {
+        filename.append(".png");
+    }
+    //QPixmap image = m_volume_renderer->renderPixmap(1024, 768);
+    //QPixmap image = QPixmap::grabWidget(m_volume_renderer);
+    QImage image = m_volume_renderer->grabFrameBuffer();
+    if (!image.save(filename, "PNG")) {
+        QMessageBox::warning(this, "Save Image", "Error saving image.");
+    }
 }
