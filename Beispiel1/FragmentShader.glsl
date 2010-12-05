@@ -94,7 +94,7 @@ void main(void)
 
         vec4 finalColor = sampleColor * shadingColor;
 
-        float alpha = transferColor.a * density.a;
+        float alpha = transferColor.a;
 
         // Blend
         gl_FragColor = vec4(alpha * finalColor.rgb + (1.0 - alpha) * gl_FragColor.rgb, 1.0);
