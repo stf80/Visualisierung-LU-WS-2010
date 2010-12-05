@@ -79,25 +79,24 @@ void main(void)
         float dy = texture3D(sampler, vec3(tex3DCoord.xyz + vec3(0.0, 0.001, 0.0))).a - texture3D(sampler, vec3(tex3DCoord.xyz - vec3(0.0, 0.001, 0.0))).a;
         float dz = texture3D(sampler, vec3(tex3DCoord.xyz + vec3(0.0, 0.0, 0.001))).a - texture3D(sampler, vec3(tex3DCoord.xyz - vec3(0.0, 0.0, 0.001))).a;
         vec3 N = normalize(vec3(dx, dy, dz)); // approx normal vector
-        vec3 L = normalize(gl_LightSource[0].position.xyz); // vector to light source
+        vec3 L = normalize(gl_LightSource[0].position.xyz - sampleLocation); // vector to light source
         vec3 V = normalize(n0); // vector to observer
         vec3 H = normalize(V + L);
 
         // map density value to color and opacity using transfer function
         vec4 transferColor = texture1D(transferSampler, density.a);
-        //vec4 sampleColor = vec4(transferColor.xyz, density.a);
-        //vec4 sampleColor = vec4(1.0, 1.0, 1.0, density.a);
-        vec4 sampleColor = vec4(transferColor.rgb, transferColor.a * density.a); // color and opacity of sample
+        vec4 sampleColor = transferColor;
 
         // calculate final fragment color with shading
-        //vec4 shadingColor = c_ambient + c_diffuse*max(dot(N,L), 0.0);
         //float kDist = float(i)/float(N);
         //float kVal = k1 + k2*kDist;
         vec4 shadingColor = c_light*c_ambient + c_light*c_diffuse*max(dot(N,L), 0.0) + c_light*c_specular*max(pow(dot(N,H),c_exponent),0.0);
 
         vec4 finalColor = sampleColor * shadingColor;
 
+        float alpha = transferColor.a * density.a;
+
         // Blend
-        gl_FragColor = vec4(density.a * finalColor.rgb + (1.0 - density.a) * gl_FragColor.rgb, 1.0);
+        gl_FragColor = vec4(alpha * finalColor.rgb + (1.0 - alpha) * gl_FragColor.rgb, 1.0);
     }
 }

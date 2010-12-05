@@ -55,6 +55,7 @@ void VolumeRenderer::updateTransfer()
 
     g.setSpread(QGradient::PadSpread);
 
+    transferLUT.fill(0x00000000);
     QPainter *p = new QPainter(&transferLUT);
 
     p->setBrush(g);
