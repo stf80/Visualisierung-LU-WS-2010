@@ -32,45 +32,138 @@
 <a name="l00002"></a>00002 <span class="preprocessor"></span><span class="preprocessor">#define VOLUMERENDERER_H</span>
 <a name="l00003"></a>00003 <span class="preprocessor"></span>
 <a name="l00004"></a>00004 <span class="preprocessor">#include &lt;QtGui&gt;</span>
-<a name="l00005"></a>00005 
-<a name="l00006"></a>00006 <span class="preprocessor">#include &quot;arthurwidgets.h&quot;</span>
+<a name="l00005"></a>00005 <span class="preprocessor">#include &lt;QtOpenGL&gt;</span>
+<a name="l00006"></a>00006 <span class="preprocessor">#include &lt;QGLWidget&gt;</span>
 <a name="l00007"></a>00007 
-<a name="l00012"></a><a class="code" href="class_volume_renderer.html">00012</a> <span class="keyword">class </span><a class="code" href="class_volume_renderer.html" title="Rendering view of the volume data.">VolumeRenderer</a> :
-<a name="l00013"></a>00013 <span class="comment">//        public ArthurFrame</span>
-<a name="l00014"></a>00014 <span class="comment">//        public QGraphicsView</span>
-<a name="l00015"></a>00015         <span class="keyword">public</span> QWidget
-<a name="l00016"></a>00016 {
-<a name="l00017"></a>00017     Q_OBJECT
-<a name="l00018"></a>00018 
-<a name="l00019"></a>00019 <span class="keyword">public</span>:
-<a name="l00025"></a>00025     <a class="code" href="class_volume_renderer.html#a2ffc676408571ba954414e6afbfff2b9" title="Default constructor.">VolumeRenderer</a>(QWidget *parent = 0);
-<a name="l00026"></a>00026 
-<a name="l00031"></a>00031     <a class="code" href="class_volume_renderer.html#ae0f8fe4bebebc9ad5e7cd002ada2fcf0" title="Default destructor.">~VolumeRenderer</a>();
-<a name="l00032"></a>00032 
-<a name="l00038"></a>00038         <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#aee8b4655c6359a120f364def4b732866" title="Redraws the rendering view onto an arbitrary device using a QPainter.">paint</a>(QPainter *p);
-<a name="l00039"></a>00039 
-<a name="l00045"></a>00045         <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#a1f788e486bcaeba47375c35512562660" title="Invoked when the widget should redraw itself. Redraws the widget using paint().">paintEvent</a>(QPaintEvent *e);
-<a name="l00046"></a>00046 
-<a name="l00047"></a><a class="code" href="class_volume_renderer.html#a773d6629cf4908751f4c74cb9b9948fc">00047</a>         QSize <a class="code" href="class_volume_renderer.html#a773d6629cf4908751f4c74cb9b9948fc">sizeHint</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> QSize(400, 400); }
-<a name="l00048"></a>00048 
-<a name="l00049"></a>00049     <span class="keyword">public</span> slots:
-<a name="l00055"></a>00055         <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#a3fc764086d03ff2ab3d23c2978752149" title="Sets the points defining the color and transparency gradient of the transfer function.">setGradientStops</a>(<span class="keyword">const</span> QGradientStops &amp;stops);
-<a name="l00056"></a>00056 
-<a name="l00057"></a>00057     <span class="keyword">private</span>:
-<a name="l00058"></a>00058         QGradientStops m_stops; 
-<a name="l00060"></a>00060         QImage *image; 
-<a name="l00062"></a>00062         QImage transferLUT; 
-<a name="l00070"></a>00070         QRgb transfer(<span class="keywordtype">float</span> value);
-<a name="l00071"></a>00071 
-<a name="l00073"></a>00073 
-<a name="l00077"></a>00077         <span class="keywordtype">void</span> updateTransfer();
-<a name="l00078"></a>00078 
-<a name="l00079"></a>00079 };
-<a name="l00080"></a>00080 
-<a name="l00081"></a>00081 <span class="preprocessor">#endif // VOLUMERENDERER_H</span>
+<a name="l00008"></a>00008 <span class="preprocessor">#include &quot;GL/glext.h&quot;</span>
+<a name="l00009"></a>00009 
+<a name="l00010"></a>00010 <span class="preprocessor">#include &quot;arthurwidgets.h&quot;</span>
+<a name="l00011"></a>00011 
+<a name="l00012"></a>00012 <span class="preprocessor">#include &quot;Volume.h&quot;</span>
+<a name="l00013"></a>00013 <span class="preprocessor">#include &quot;<a class="code" href="renderingoptions_8h.html">renderingoptions.h</a>&quot;</span>
+<a name="l00014"></a>00014 
+<a name="l00015"></a>00015 <span class="comment">/****************************************************************************</span>
+<a name="l00016"></a>00016 <span class="comment"> **</span>
+<a name="l00017"></a>00017 <span class="comment"> ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).</span>
+<a name="l00018"></a>00018 <span class="comment"> ** All rights reserved.</span>
+<a name="l00019"></a>00019 <span class="comment"> ** Contact: Nokia Corporation (qt-info@nokia.com)</span>
+<a name="l00020"></a>00020 <span class="comment"> **</span>
+<a name="l00021"></a>00021 <span class="comment"> ** This file is part of the examples of the Qt Toolkit.</span>
+<a name="l00022"></a>00022 <span class="comment"> **</span>
+<a name="l00023"></a>00023 <span class="comment"> ** $QT_BEGIN_LICENSE:BSD$</span>
+<a name="l00024"></a>00024 <span class="comment"> ** You may use this file under the terms of the BSD license as follows:</span>
+<a name="l00025"></a>00025 <span class="comment"> **</span>
+<a name="l00026"></a>00026 <span class="comment"> ** &quot;Redistribution and use in source and binary forms, with or without</span>
+<a name="l00027"></a>00027 <span class="comment"> ** modification, are permitted provided that the following conditions are</span>
+<a name="l00028"></a>00028 <span class="comment"> ** met:</span>
+<a name="l00029"></a>00029 <span class="comment"> **   * Redistributions of source code must retain the above copyright</span>
+<a name="l00030"></a>00030 <span class="comment"> **     notice, this list of conditions and the following disclaimer.</span>
+<a name="l00031"></a>00031 <span class="comment"> **   * Redistributions in binary form must reproduce the above copyright</span>
+<a name="l00032"></a>00032 <span class="comment"> **     notice, this list of conditions and the following disclaimer in</span>
+<a name="l00033"></a>00033 <span class="comment"> **     the documentation and/or other materials provided with the</span>
+<a name="l00034"></a>00034 <span class="comment"> **     distribution.</span>
+<a name="l00035"></a>00035 <span class="comment"> **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor</span>
+<a name="l00036"></a>00036 <span class="comment"> **     the names of its contributors may be used to endorse or promote</span>
+<a name="l00037"></a>00037 <span class="comment"> **     products derived from this software without specific prior written</span>
+<a name="l00038"></a>00038 <span class="comment"> **     permission.</span>
+<a name="l00039"></a>00039 <span class="comment"> **</span>
+<a name="l00040"></a>00040 <span class="comment"> ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</span>
+<a name="l00041"></a>00041 <span class="comment"> ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</span>
+<a name="l00042"></a>00042 <span class="comment"> ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR</span>
+<a name="l00043"></a>00043 <span class="comment"> ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT</span>
+<a name="l00044"></a>00044 <span class="comment"> ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<a name="l00045"></a>00045 <span class="comment"> ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT</span>
+<a name="l00046"></a>00046 <span class="comment"> ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,</span>
+<a name="l00047"></a>00047 <span class="comment"> ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY</span>
+<a name="l00048"></a>00048 <span class="comment"> ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</span>
+<a name="l00049"></a>00049 <span class="comment"> ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE</span>
+<a name="l00050"></a>00050 <span class="comment"> ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;</span>
+<a name="l00051"></a>00051 <span class="comment"> ** $QT_END_LICENSE$</span>
+<a name="l00052"></a>00052 <span class="comment"> **</span>
+<a name="l00053"></a>00053 <span class="comment"> ****************************************************************************/</span>
+<a name="l00054"></a>00054 
+<a name="l00059"></a><a class="code" href="class_volume_renderer.html">00059</a>  <span class="keyword">class </span><a class="code" href="class_volume_renderer.html" title="Rendering view of the volume data.">VolumeRenderer</a> : <span class="keyword">public</span> QGLWidget
+<a name="l00060"></a>00060  {
+<a name="l00061"></a>00061      Q_OBJECT
+<a name="l00062"></a>00062 
+<a name="l00063"></a>00063  <span class="keyword">public</span>:
+<a name="l00069"></a>00069      <a class="code" href="class_volume_renderer.html#a2ffc676408571ba954414e6afbfff2b9" title="Default constructor.">VolumeRenderer</a>(QWidget *parent = 0);
+<a name="l00070"></a>00070 
+<a name="l00075"></a>00075      <a class="code" href="class_volume_renderer.html#ae0f8fe4bebebc9ad5e7cd002ada2fcf0" title="Default destructor.">~VolumeRenderer</a>();
+<a name="l00076"></a>00076 
+<a name="l00082"></a>00082          <span class="comment">//void paint(QPainter *p);</span>
+<a name="l00083"></a>00083 
+<a name="l00089"></a>00089          <span class="comment">//void paintEvent(QPaintEvent *e);</span>
+<a name="l00090"></a>00090 
+<a name="l00091"></a>00091          QSize <a class="code" href="class_volume_renderer.html#a3802087af7e3625db471b6c6d587af1f" title="Redraws the rendering view onto an arbitrary device using a QPainter.">minimumSizeHint</a>() <span class="keyword">const</span>;
+<a name="l00092"></a>00092          QSize <a class="code" href="class_volume_renderer.html#a773d6629cf4908751f4c74cb9b9948fc">sizeHint</a>() <span class="keyword">const</span>;
+<a name="l00093"></a>00093 
+<a name="l00094"></a>00094  <span class="keyword">public</span>:
+<a name="l00095"></a>00095     <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#a278fa5bd7022c7116354a6d78b88c95b">setVolume</a>(Volume* volume);
+<a name="l00096"></a>00096     <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#a729f8b7d0138084f838cdc44204c95c6">setTransfer</a>();
+<a name="l00097"></a>00097     <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#a1c15f443be9a7cdc6ccd566844379860">setRenderingOptions</a>(<a class="code" href="struct_rendering_options.html" title="Struct for storing rendering options.">RenderingOptions</a> *options);
+<a name="l00098"></a>00098 
+<a name="l00099"></a>00099      <span class="keyword">public</span> slots:
+<a name="l00105"></a>00105          <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#a3fc764086d03ff2ab3d23c2978752149" title="Sets the points defining the color and transparency gradient of the transfer function.">setGradientStops</a>(<span class="keyword">const</span> QGradientStops &amp;stops);
+<a name="l00106"></a>00106  <span class="keyword">public</span> slots:
+<a name="l00107"></a>00107      <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#ac534008d24ba7932e1b5cd5c3c098b04">setXRotation</a>(<span class="keywordtype">int</span> angle);
+<a name="l00108"></a>00108      <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#a2474a7cbfe5f37e03250098a5fb44ead">setYRotation</a>(<span class="keywordtype">int</span> angle);
+<a name="l00109"></a>00109      <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#acbf6c8a86c868898dd462a634299b333">setZRotation</a>(<span class="keywordtype">int</span> angle);
+<a name="l00110"></a>00110 
+<a name="l00111"></a>00111  signals:
+<a name="l00112"></a>00112      <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#af9a511b56a6ceac3a0d7d63d997bd1f5">xRotationChanged</a>(<span class="keywordtype">int</span> angle);
+<a name="l00113"></a>00113      <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#a46a2760087a5eb3e8220d240f389f17f">yRotationChanged</a>(<span class="keywordtype">int</span> angle);
+<a name="l00114"></a>00114      <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#a795b026a1d6d5ac9d11d4bb46b79b326">zRotationChanged</a>(<span class="keywordtype">int</span> angle);
+<a name="l00115"></a>00115 
+<a name="l00116"></a>00116  <span class="keyword">protected</span>:
+<a name="l00117"></a>00117      <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#af9188677afc0aa1b193eb89adf937afb">initializeGL</a>();
+<a name="l00118"></a>00118      <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#a70bd9e8cbd95f0b2623103821a4d603c">paintGL</a>();
+<a name="l00119"></a>00119      <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#af370b5ea137b004ebb673d1290519221">resizeGL</a>(<span class="keywordtype">int</span> width, <span class="keywordtype">int</span> height);
+<a name="l00120"></a>00120      <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#ad4914f6fb02dff83fb91b183d799c44c">mousePressEvent</a>(QMouseEvent *event);
+<a name="l00121"></a>00121      <span class="keywordtype">void</span> <a class="code" href="class_volume_renderer.html#a327cc74506ce4b86a38c1846f3c03172">mouseMoveEvent</a>(QMouseEvent *event);
+<a name="l00122"></a>00122 
+<a name="l00123"></a>00123  <span class="keyword">private</span>:
+<a name="l00124"></a>00124      QGradientStops m_stops; 
+<a name="l00126"></a>00126      QImage *image; 
+<a name="l00128"></a>00128      QImage transferLUT; 
+<a name="l00136"></a>00136      QRgb transfer(<span class="keywordtype">float</span> value);
+<a name="l00137"></a>00137 
+<a name="l00139"></a>00139 
+<a name="l00143"></a>00143      <span class="keywordtype">void</span> updateTransfer();
+<a name="l00144"></a>00144  <span class="keyword">private</span>:
+<a name="l00145"></a>00145      <span class="keywordtype">int</span> xRot;
+<a name="l00146"></a>00146      <span class="keywordtype">int</span> yRot;
+<a name="l00147"></a>00147      <span class="keywordtype">int</span> zRot;
+<a name="l00148"></a>00148      QPoint lastPos;
+<a name="l00149"></a>00149  <span class="keyword">private</span>:
+<a name="l00150"></a>00150      QGLShaderProgram *program;
+<a name="l00151"></a>00151      <span class="keywordtype">int</span> vertexLocation, texCoordLocation;
+<a name="l00152"></a>00152      <span class="keywordtype">int</span> n0Location, uLocation, vLocation;
+<a name="l00153"></a>00153      <span class="keywordtype">int</span> NLocation, volumeSizeLocation, volumeResolutionLocation;
+<a name="l00154"></a>00154      <span class="keywordtype">int</span> samplerLocation;
+<a name="l00155"></a>00155      <span class="keywordtype">int</span> lightColorLocation;
+<a name="l00156"></a>00156      <span class="keywordtype">int</span> ambientColorLocation;
+<a name="l00157"></a>00157      <span class="keywordtype">int</span> diffuseColorLocation;
+<a name="l00158"></a>00158      <span class="keywordtype">int</span> specularColorLocation;
+<a name="l00159"></a>00159      <span class="keywordtype">int</span> specularExponentLocation;
+<a name="l00160"></a>00160      <span class="keywordtype">int</span> transferLocation;
+<a name="l00161"></a>00161      <span class="keywordtype">int</span> k1Location, k2Location;
+<a name="l00162"></a>00162 
+<a name="l00163"></a>00163      <span class="keywordtype">int</span> width, height; <span class="comment">// witdh and height of viewport</span>
+<a name="l00164"></a>00164 
+<a name="l00165"></a>00165      Volume *volume;
+<a name="l00166"></a>00166      <a class="code" href="struct_rendering_options.html" title="Struct for storing rendering options.">RenderingOptions</a> *options;
+<a name="l00167"></a>00167      GLuint textureName;
+<a name="l00168"></a>00168      GLuint transferTextureName;
+<a name="l00169"></a>00169 
+<a name="l00170"></a>00170      PFNGLTEXIMAGE3DEXTPROC glTexImage3DEXT1;
+<a name="l00171"></a>00171 
+<a name="l00172"></a>00172  };
+<a name="l00173"></a>00173 
+<a name="l00174"></a>00174 <span class="preprocessor">#endif // VOLUMERENDERER_H</span>
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Fri Nov 5 2010 11:06:43 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Dec 6 2010 10:29:04 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.2 </small></address>
 </body>

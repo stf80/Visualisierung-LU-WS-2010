@@ -42,21 +42,28 @@
 <a name="l00016"></a>00016 <span class="keyword">public</span>:
 <a name="l00022"></a>00022     <span class="keyword">explicit</span> <a class="code" href="class_color_label.html#a76e4aa3c20ce436d771e41a2fdef8f4c" title="The default constructor.">ColorLabel</a>(QWidget *parent = 0);
 <a name="l00023"></a>00023 
-<a name="l00024"></a>00024 signals:
-<a name="l00025"></a>00025 
-<a name="l00026"></a>00026 <span class="keyword">public</span> slots:
-<a name="l00027"></a>00027 
-<a name="l00028"></a>00028 <span class="keyword">private</span> slots:
-<a name="l00033"></a>00033     <span class="keywordtype">void</span> setColor();
+<a name="l00024"></a>00024     QColor <a class="code" href="class_color_label.html#ad97ac0af8147c013d9c10f783d3f3a96">getColor</a>();
+<a name="l00025"></a>00025     <span class="keywordtype">void</span> <a class="code" href="class_color_label.html#a98aada893ad694ceae9cfca5e071bb0f">setColor</a>(QColor color);
+<a name="l00026"></a>00026 
+<a name="l00027"></a>00027 signals:
+<a name="l00028"></a>00028     <span class="keywordtype">void</span> <a class="code" href="class_color_label.html#a5cf18ffa1fdc3766c284d77800caff62">editingFinished</a>();
+<a name="l00029"></a>00029 
+<a name="l00030"></a>00030 <span class="keyword">public</span> slots:
+<a name="l00031"></a>00031 
+<a name="l00032"></a>00032 <span class="keyword">private</span>:
+<a name="l00033"></a>00033     QColor color;
 <a name="l00034"></a>00034 
-<a name="l00035"></a>00035 <span class="keyword">protected</span>:
-<a name="l00041"></a>00041     <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_color_label.html#a635f507e97a14b13539320f57a0bbd8e" title="Callback invoked when the ColorLabel is pressed.">mousePressEvent</a>(QMouseEvent *e);
-<a name="l00042"></a>00042 };
-<a name="l00043"></a>00043 
-<a name="l00044"></a>00044 <span class="preprocessor">#endif // COLORLABEL_H</span>
+<a name="l00035"></a>00035 <span class="keyword">private</span> slots:
+<a name="l00040"></a>00040     <span class="keywordtype">void</span> setColor();
+<a name="l00041"></a>00041 
+<a name="l00042"></a>00042 <span class="keyword">protected</span>:
+<a name="l00048"></a>00048     <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_color_label.html#a635f507e97a14b13539320f57a0bbd8e" title="Callback invoked when the ColorLabel is pressed.">mousePressEvent</a>(QMouseEvent *e);
+<a name="l00049"></a>00049 };
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051 <span class="preprocessor">#endif // COLORLABEL_H</span>
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Fri Nov 5 2010 11:06:43 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Dec 6 2010 10:29:04 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.2 </small></address>
 </body>

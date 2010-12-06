@@ -34,6 +34,9 @@
 </div>
 <div class="contents">
 <!-- doxytag: class="SlicingView" -->
+<p>Widget for displaying slicing view.  
+<a href="#_details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="slicingview_8h_source.html">slicingview.h</a>&gt;</code></p>
 
 <p><a href="class_slicing_view-members.html">List of all members.</a></p>
@@ -51,12 +54,16 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_slicing_view.html#a50e318f717e2fab1cfa7afd0328a13a1">~SlicingView</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_slicing_view.html#a7330ff4cf9f123b80ab23858225818bf">paintEvent</a> (QPaintEvent *event)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_slicing_view.html#aec8dc9269e3263b7643b3b9dd3831780">setVolume</a> (Volume *volume)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set Volume to display.  <a href="#aec8dc9269e3263b7643b3b9dd3831780"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_slicing_view.html#a4570f28065a03eedac619504feac6919">setDirection</a> (int direction)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set slicing direction.  <a href="#a4570f28065a03eedac619504feac6919"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_slicing_view.html#a29e80e87dcb0afa662309ba36bad3c0e">setPosition</a> (int position)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set slice position.  <a href="#a29e80e87dcb0afa662309ba36bad3c0e"></a><br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
+<p>Widget for displaying slicing view. </p>
 
-<p>Definition at line <a class="el" href="slicingview_8h_source.html#l00007">7</a> of file <a class="el" href="slicingview_8h_source.html">slicingview.h</a>.</p>
+<p>Definition at line <a class="el" href="slicingview_8h_source.html#l00010">10</a> of file <a class="el" href="slicingview_8h_source.html">slicingview.h</a>.</p>
 <hr/><h2>Member Enumeration Documentation</h2>
 <a class="anchor" id="a4aa9f6bcab9b8b05c24936f2574fc208"></a><!-- doxytag: member="SlicingView::@0" ref="a4aa9f6bcab9b8b05c24936f2574fc208" args="" -->
 <div class="memitem">
@@ -79,7 +86,7 @@ Public Member Functions</h2></td></tr>
 </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="slicingview_8h_source.html#l00020">20</a> of file <a class="el" href="slicingview_8h_source.html">slicingview.h</a>.</p>
+<p>Definition at line <a class="el" href="slicingview_8h_source.html#l00034">34</a> of file <a class="el" href="slicingview_8h_source.html">slicingview.h</a>.</p>
 
 </div>
 </div>
@@ -175,7 +182,9 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="slicingview_8h_source.html#l00017">17</a> of file <a class="el" href="slicingview_8h_source.html">slicingview.h</a>.</p>
+<p>Set slicing direction. </p>
+
+<p>Definition at line <a class="el" href="slicingview_8h_source.html#l00026">26</a> of file <a class="el" href="slicingview_8h_source.html">slicingview.h</a>.</p>
 
 </div>
 </div>
@@ -194,7 +203,10 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="slicingview_8h_source.html#l00018">18</a> of file <a class="el" href="slicingview_8h_source.html">slicingview.h</a>.</p>
+<p>Set slice position. </p>
+<p>E.g. for setDirection(DIRECTION_X), this specifies the slice's x position. </p>
+
+<p>Definition at line <a class="el" href="slicingview_8h_source.html#l00032">32</a> of file <a class="el" href="slicingview_8h_source.html">slicingview.h</a>.</p>
 
 </div>
 </div>
@@ -213,7 +225,9 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="slicingview_8h_source.html#l00016">16</a> of file <a class="el" href="slicingview_8h_source.html">slicingview.h</a>.</p>
+<p>Set Volume to display. </p>
+
+<p>Definition at line <a class="el" href="slicingview_8h_source.html#l00022">22</a> of file <a class="el" href="slicingview_8h_source.html">slicingview.h</a>.</p>
 
 </div>
 </div>
@@ -222,7 +236,7 @@ Public Member Functions</h2></td></tr>
 <li><a class="el" href="slicingview_8cpp_source.html">slicingview.cpp</a></li>
 </ul>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Fri Nov 5 2010 11:06:43 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Dec 6 2010 10:29:04 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.2 </small></address>
 </body>

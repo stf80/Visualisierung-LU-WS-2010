@@ -2,6 +2,21 @@
 #include "mainwindow.h"
 
 /**
+  * \mainpage Visualisierung Beispiel 1
+  *
+  * Stefan Fiedler, Simon Parzer
+  *
+  * \section intro_sec Einleitung
+  *
+  * Dieses Beispiel rendert Volume-Grids mittels Raycasting.
+  *
+  * \section dl_sec Download
+  *
+  * <a href="source.tbz">Source-Code</a>
+  */
+
+
+/**
  * @brief Main function; starts the application and displays the main window. Exits when the main windows is closed.
  *
  * @param argc number of command line arguments

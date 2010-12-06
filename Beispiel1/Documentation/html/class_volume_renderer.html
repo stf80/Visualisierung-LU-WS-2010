@@ -28,7 +28,9 @@
 <div class="header">
   <div class="summary">
 <a href="#pub-slots">Public Slots</a> &#124;
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#signals">Signals</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
 <h1>VolumeRenderer Class Reference</h1>  </div>
 </div>
@@ -45,22 +47,38 @@
 Public Slots</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a3fc764086d03ff2ab3d23c2978752149">setGradientStops</a> (const QGradientStops &amp;stops)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the points defining the color and transparency gradient of the transfer function.  <a href="#a3fc764086d03ff2ab3d23c2978752149"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#ac534008d24ba7932e1b5cd5c3c098b04">setXRotation</a> (int angle)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a2474a7cbfe5f37e03250098a5fb44ead">setYRotation</a> (int angle)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#acbf6c8a86c868898dd462a634299b333">setZRotation</a> (int angle)</td></tr>
+<tr><td colspan="2"><h2><a name="signals"></a>
+Signals</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#af9a511b56a6ceac3a0d7d63d997bd1f5">xRotationChanged</a> (int angle)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a46a2760087a5eb3e8220d240f389f17f">yRotationChanged</a> (int angle)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a795b026a1d6d5ac9d11d4bb46b79b326">zRotationChanged</a> (int angle)</td></tr>
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a2ffc676408571ba954414e6afbfff2b9">VolumeRenderer</a> (QWidget *parent=0)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#a2ffc676408571ba954414e6afbfff2b9"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#ae0f8fe4bebebc9ad5e7cd002ada2fcf0">~VolumeRenderer</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Default destructor.  <a href="#ae0f8fe4bebebc9ad5e7cd002ada2fcf0"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#aee8b4655c6359a120f364def4b732866">paint</a> (QPainter *p)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Redraws the rendering view onto an arbitrary device using a QPainter.  <a href="#aee8b4655c6359a120f364def4b732866"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a1f788e486bcaeba47375c35512562660">paintEvent</a> (QPaintEvent *e)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoked when the widget should redraw itself. Redraws the widget using <a class="el" href="class_volume_renderer.html#aee8b4655c6359a120f364def4b732866" title="Redraws the rendering view onto an arbitrary device using a QPainter.">paint()</a>.  <a href="#a1f788e486bcaeba47375c35512562660"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a3802087af7e3625db471b6c6d587af1f">minimumSizeHint</a> () const </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Redraws the rendering view onto an arbitrary device using a QPainter.  <a href="#a3802087af7e3625db471b6c6d587af1f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a773d6629cf4908751f4c74cb9b9948fc">sizeHint</a> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a278fa5bd7022c7116354a6d78b88c95b">setVolume</a> (Volume *volume)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a729f8b7d0138084f838cdc44204c95c6">setTransfer</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a1c15f443be9a7cdc6ccd566844379860">setRenderingOptions</a> (<a class="el" href="struct_rendering_options.html">RenderingOptions</a> *options)</td></tr>
+<tr><td colspan="2"><h2><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#af9188677afc0aa1b193eb89adf937afb">initializeGL</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a70bd9e8cbd95f0b2623103821a4d603c">paintGL</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#af370b5ea137b004ebb673d1290519221">resizeGL</a> (int width, int height)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#ad4914f6fb02dff83fb91b183d799c44c">mousePressEvent</a> (QMouseEvent *event)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_volume_renderer.html#a327cc74506ce4b86a38c1846f3c03172">mouseMoveEvent</a> (QMouseEvent *event)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Rendering view of the volume data. </p>
 
-<p>Definition at line <a class="el" href="volumerenderer_8h_source.html#l00012">12</a> of file <a class="el" href="volumerenderer_8h_source.html">volumerenderer.h</a>.</p>
+<p>Definition at line <a class="el" href="volumerenderer_8h_source.html#l00059">59</a> of file <a class="el" href="volumerenderer_8h_source.html">volumerenderer.h</a>.</p>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a2ffc676408571ba954414e6afbfff2b9"></a><!-- doxytag: member="VolumeRenderer::VolumeRenderer" ref="a2ffc676408571ba954414e6afbfff2b9" args="(QWidget *parent=0)" -->
 <div class="memitem">
@@ -85,7 +103,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00004">4</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00018">18</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
 
 </div>
 </div>
@@ -105,21 +123,38 @@ Public Member Functions</h2></td></tr>
 
 <p>Default destructor. </p>
 
-<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00014">14</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00033">33</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
 
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="aee8b4655c6359a120f364def4b732866"></a><!-- doxytag: member="VolumeRenderer::paint" ref="aee8b4655c6359a120f364def4b732866" args="(QPainter *p)" -->
+<a class="anchor" id="af9188677afc0aa1b193eb89adf937afb"></a><!-- doxytag: member="VolumeRenderer::initializeGL" ref="af9188677afc0aa1b193eb89adf937afb" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void VolumeRenderer::paint </td>
+          <td class="memname">void VolumeRenderer::initializeGL </td>
           <td>(</td>
-          <td class="paramtype">QPainter *&#160;</td>
-          <td class="paramname"> <em>p</em>&#160;)</td>
-          <td></td>
+          <td class="paramname">&#160;)</td>
+          <td><code> [protected, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00243">243</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a3802087af7e3625db471b6c6d587af1f"></a><!-- doxytag: member="VolumeRenderer::minimumSizeHint" ref="a3802087af7e3625db471b6c6d587af1f" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">QSize VolumeRenderer::minimumSizeHint </td>
+          <td>(</td>
+          <td class="paramname">&#160;)</td>
+          <td> const</td>
         </tr>
       </table>
 </div>
@@ -128,39 +163,98 @@ Public Member Functions</h2></td></tr>
 <p>Redraws the rendering view onto an arbitrary device using a QPainter. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>the QPainter to use for drawing </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00057">57</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a1f788e486bcaeba47375c35512562660"></a><!-- doxytag: member="VolumeRenderer::paintEvent" ref="a1f788e486bcaeba47375c35512562660" args="(QPaintEvent *e)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void VolumeRenderer::paintEvent </td>
-          <td>(</td>
-          <td class="paramtype">QPaintEvent *&#160;</td>
-          <td class="paramname"> <em>e</em>&#160;)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Invoked when the widget should redraw itself. Redraws the widget using <a class="el" href="class_volume_renderer.html#aee8b4655c6359a120f364def4b732866" title="Redraws the rendering view onto an arbitrary device using a QPainter.">paint()</a>. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
+    <tr><td class="paramname">p</td><td>the QPainter to use for drawing Invoked when the widget should redraw itself. Redraws the widget using paint().</td></tr>
     <tr><td class="paramname">e</td><td>the event causing the widget to redraw itself </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00073">73</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00195">195</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a327cc74506ce4b86a38c1846f3c03172"></a><!-- doxytag: member="VolumeRenderer::mouseMoveEvent" ref="a327cc74506ce4b86a38c1846f3c03172" args="(QMouseEvent *event)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::mouseMoveEvent </td>
+          <td>(</td>
+          <td class="paramtype">QMouseEvent *&#160;</td>
+          <td class="paramname"> <em>event</em>&#160;)</td>
+          <td><code> [protected]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00414">414</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad4914f6fb02dff83fb91b183d799c44c"></a><!-- doxytag: member="VolumeRenderer::mousePressEvent" ref="ad4914f6fb02dff83fb91b183d799c44c" args="(QMouseEvent *event)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::mousePressEvent </td>
+          <td>(</td>
+          <td class="paramtype">QMouseEvent *&#160;</td>
+          <td class="paramname"> <em>event</em>&#160;)</td>
+          <td><code> [protected]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00409">409</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a70bd9e8cbd95f0b2623103821a4d603c"></a><!-- doxytag: member="VolumeRenderer::paintGL" ref="a70bd9e8cbd95f0b2623103821a4d603c" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::paintGL </td>
+          <td>(</td>
+          <td class="paramname">&#160;)</td>
+          <td><code> [protected, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00314">314</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af370b5ea137b004ebb673d1290519221"></a><!-- doxytag: member="VolumeRenderer::resizeGL" ref="af370b5ea137b004ebb673d1290519221" args="(int width, int height)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::resizeGL </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"> <em>width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"> <em>height</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [protected, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00390">390</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
 
 </div>
 </div>
@@ -187,7 +281,120 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00048">48</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00069">69</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a1c15f443be9a7cdc6ccd566844379860"></a><!-- doxytag: member="VolumeRenderer::setRenderingOptions" ref="a1c15f443be9a7cdc6ccd566844379860" args="(RenderingOptions *options)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::setRenderingOptions </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_rendering_options.html">RenderingOptions</a> *&#160;</td>
+          <td class="paramname"> <em>options</em>&#160;)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00137">137</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a729f8b7d0138084f838cdc44204c95c6"></a><!-- doxytag: member="VolumeRenderer::setTransfer" ref="a729f8b7d0138084f838cdc44204c95c6" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::setTransfer </td>
+          <td>(</td>
+          <td class="paramname">&#160;)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00115">115</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a278fa5bd7022c7116354a6d78b88c95b"></a><!-- doxytag: member="VolumeRenderer::setVolume" ref="a278fa5bd7022c7116354a6d78b88c95b" args="(Volume *volume)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::setVolume </td>
+          <td>(</td>
+          <td class="paramtype">Volume *&#160;</td>
+          <td class="paramname"> <em>volume</em>&#160;)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00078">78</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ac534008d24ba7932e1b5cd5c3c098b04"></a><!-- doxytag: member="VolumeRenderer::setXRotation" ref="ac534008d24ba7932e1b5cd5c3c098b04" args="(int angle)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::setXRotation </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"> <em>angle</em>&#160;)</td>
+          <td><code> [slot]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00213">213</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a2474a7cbfe5f37e03250098a5fb44ead"></a><!-- doxytag: member="VolumeRenderer::setYRotation" ref="a2474a7cbfe5f37e03250098a5fb44ead" args="(int angle)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::setYRotation </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"> <em>angle</em>&#160;)</td>
+          <td><code> [slot]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00223">223</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="acbf6c8a86c868898dd462a634299b333"></a><!-- doxytag: member="VolumeRenderer::setZRotation" ref="acbf6c8a86c868898dd462a634299b333" args="(int angle)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::setZRotation </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"> <em>angle</em>&#160;)</td>
+          <td><code> [slot]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00233">233</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
 
 </div>
 </div>
@@ -199,13 +406,64 @@ Public Member Functions</h2></td></tr>
           <td class="memname">QSize VolumeRenderer::sizeHint </td>
           <td>(</td>
           <td class="paramname">&#160;)</td>
-          <td> const<code> [inline]</code></td>
+          <td> const</td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="volumerenderer_8h_source.html#l00047">47</a> of file <a class="el" href="volumerenderer_8h_source.html">volumerenderer.h</a>.</p>
+<p>Definition at line <a class="el" href="volumerenderer_8cpp_source.html#l00200">200</a> of file <a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af9a511b56a6ceac3a0d7d63d997bd1f5"></a><!-- doxytag: member="VolumeRenderer::xRotationChanged" ref="af9a511b56a6ceac3a0d7d63d997bd1f5" args="(int angle)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::xRotationChanged </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"> <em>angle</em>&#160;)</td>
+          <td><code> [signal]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a46a2760087a5eb3e8220d240f389f17f"></a><!-- doxytag: member="VolumeRenderer::yRotationChanged" ref="a46a2760087a5eb3e8220d240f389f17f" args="(int angle)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::yRotationChanged </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"> <em>angle</em>&#160;)</td>
+          <td><code> [signal]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a795b026a1d6d5ac9d11d4bb46b79b326"></a><!-- doxytag: member="VolumeRenderer::zRotationChanged" ref="a795b026a1d6d5ac9d11d4bb46b79b326" args="(int angle)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void VolumeRenderer::zRotationChanged </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"> <em>angle</em>&#160;)</td>
+          <td><code> [signal]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
 
 </div>
 </div>
@@ -214,7 +472,7 @@ Public Member Functions</h2></td></tr>
 <li><a class="el" href="volumerenderer_8cpp_source.html">volumerenderer.cpp</a></li>
 </ul>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Fri Nov 5 2010 11:06:43 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Dec 6 2010 10:29:04 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.2 </small></address>
 </body>

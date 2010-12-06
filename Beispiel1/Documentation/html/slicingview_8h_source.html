@@ -34,36 +34,36 @@
 <a name="l00004"></a>00004 <span class="preprocessor">#include &lt;QtGui&gt;</span>
 <a name="l00005"></a>00005 <span class="preprocessor">#include &quot;Volume.h&quot;</span>
 <a name="l00006"></a>00006 
-<a name="l00007"></a><a class="code" href="class_slicing_view.html">00007</a> <span class="keyword">class </span><a class="code" href="class_slicing_view.html">SlicingView</a> : <span class="keyword">public</span> QWidget
-<a name="l00008"></a>00008 {
-<a name="l00009"></a>00009 <span class="keyword">public</span>:
-<a name="l00010"></a>00010     <a class="code" href="class_slicing_view.html#af9687b24d7968c90dfb34997fbf032ac">SlicingView</a>();
-<a name="l00011"></a>00011     <a class="code" href="class_slicing_view.html#af9687b24d7968c90dfb34997fbf032ac">SlicingView</a>(QGroupBox*&amp; gb);
-<a name="l00012"></a>00012     <span class="keyword">virtual</span> <a class="code" href="class_slicing_view.html#a50e318f717e2fab1cfa7afd0328a13a1">~SlicingView</a>();
-<a name="l00013"></a>00013 
-<a name="l00014"></a>00014     <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_slicing_view.html#a7330ff4cf9f123b80ab23858225818bf">paintEvent</a>(QPaintEvent* event);
-<a name="l00015"></a>00015 
-<a name="l00016"></a><a class="code" href="class_slicing_view.html#aec8dc9269e3263b7643b3b9dd3831780">00016</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_slicing_view.html#aec8dc9269e3263b7643b3b9dd3831780">setVolume</a>(Volume *volume) { this-&gt;volume = volume; }
-<a name="l00017"></a><a class="code" href="class_slicing_view.html#a4570f28065a03eedac619504feac6919">00017</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_slicing_view.html#a4570f28065a03eedac619504feac6919">setDirection</a>(<span class="keywordtype">int</span> direction) { this-&gt;direction = direction; }
-<a name="l00018"></a><a class="code" href="class_slicing_view.html#a29e80e87dcb0afa662309ba36bad3c0e">00018</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_slicing_view.html#a29e80e87dcb0afa662309ba36bad3c0e">setPosition</a>(<span class="keywordtype">int</span> position) { this-&gt;position = position; }
-<a name="l00019"></a>00019 
-<a name="l00020"></a>00020     <span class="keyword">enum</span> {
-<a name="l00021"></a><a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a495cb45d2e1a969127ff26466080e5bb">00021</a>         <a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a495cb45d2e1a969127ff26466080e5bb">DIRECTION_X</a>,
-<a name="l00022"></a><a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a12722877029a9e818c2937eeb507985c">00022</a>         <a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a12722877029a9e818c2937eeb507985c">DIRECTION_Y</a>,
-<a name="l00023"></a><a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a7e366845f22c4a85d9618a3be67eaa00">00023</a>         <a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a7e366845f22c4a85d9618a3be67eaa00">DIRECTION_Z</a>
-<a name="l00024"></a>00024     };
-<a name="l00025"></a>00025 
-<a name="l00026"></a>00026 <span class="keyword">private</span>:
-<a name="l00027"></a>00027     Volume *volume;
-<a name="l00028"></a>00028     <span class="keywordtype">int</span> direction;
-<a name="l00029"></a>00029     <span class="keywordtype">int</span> position;
-<a name="l00030"></a>00030     QImage* image;
-<a name="l00031"></a>00031 };
-<a name="l00032"></a>00032 
-<a name="l00033"></a>00033 <span class="preprocessor">#endif</span>
+<a name="l00010"></a><a class="code" href="class_slicing_view.html">00010</a> <span class="keyword">class </span><a class="code" href="class_slicing_view.html" title="Widget for displaying slicing view.">SlicingView</a> : <span class="keyword">public</span> QWidget
+<a name="l00011"></a>00011 {
+<a name="l00012"></a>00012 <span class="keyword">public</span>:
+<a name="l00013"></a>00013     <a class="code" href="class_slicing_view.html#af9687b24d7968c90dfb34997fbf032ac">SlicingView</a>();
+<a name="l00014"></a>00014     <a class="code" href="class_slicing_view.html#af9687b24d7968c90dfb34997fbf032ac">SlicingView</a>(QGroupBox*&amp; gb);
+<a name="l00015"></a>00015     <span class="keyword">virtual</span> <a class="code" href="class_slicing_view.html#a50e318f717e2fab1cfa7afd0328a13a1">~SlicingView</a>();
+<a name="l00016"></a>00016 
+<a name="l00017"></a>00017     <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_slicing_view.html#a7330ff4cf9f123b80ab23858225818bf">paintEvent</a>(QPaintEvent* event);
+<a name="l00018"></a>00018 
+<a name="l00022"></a><a class="code" href="class_slicing_view.html#aec8dc9269e3263b7643b3b9dd3831780">00022</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_slicing_view.html#aec8dc9269e3263b7643b3b9dd3831780" title="Set Volume to display.">setVolume</a>(Volume *volume) { this-&gt;volume = volume; }
+<a name="l00026"></a><a class="code" href="class_slicing_view.html#a4570f28065a03eedac619504feac6919">00026</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_slicing_view.html#a4570f28065a03eedac619504feac6919" title="Set slicing direction.">setDirection</a>(<span class="keywordtype">int</span> direction) { this-&gt;direction = direction; }
+<a name="l00032"></a><a class="code" href="class_slicing_view.html#a29e80e87dcb0afa662309ba36bad3c0e">00032</a>     <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="class_slicing_view.html#a29e80e87dcb0afa662309ba36bad3c0e" title="Set slice position.">setPosition</a>(<span class="keywordtype">int</span> position) { this-&gt;position = position; }
+<a name="l00033"></a>00033 
+<a name="l00034"></a>00034     <span class="keyword">enum</span> {
+<a name="l00035"></a><a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a495cb45d2e1a969127ff26466080e5bb">00035</a>         <a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a495cb45d2e1a969127ff26466080e5bb">DIRECTION_X</a>,
+<a name="l00036"></a><a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a12722877029a9e818c2937eeb507985c">00036</a>         <a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a12722877029a9e818c2937eeb507985c">DIRECTION_Y</a>,
+<a name="l00037"></a><a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a7e366845f22c4a85d9618a3be67eaa00">00037</a>         <a class="code" href="class_slicing_view.html#a4aa9f6bcab9b8b05c24936f2574fc208a7e366845f22c4a85d9618a3be67eaa00">DIRECTION_Z</a>
+<a name="l00038"></a>00038     };
+<a name="l00039"></a>00039 
+<a name="l00040"></a>00040 <span class="keyword">private</span>:
+<a name="l00041"></a>00041     Volume *volume;
+<a name="l00042"></a>00042     <span class="keywordtype">int</span> direction;
+<a name="l00043"></a>00043     <span class="keywordtype">int</span> position;
+<a name="l00044"></a>00044     QImage* image;
+<a name="l00045"></a>00045 };
+<a name="l00046"></a>00046 
+<a name="l00047"></a>00047 <span class="preprocessor">#endif</span>
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Fri Nov 5 2010 11:06:43 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Dec 6 2010 10:29:04 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.2 </small></address>
 </body>
