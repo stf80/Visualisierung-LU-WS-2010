@@ -38,44 +38,52 @@
 <a name="l00008"></a>00008 <span class="preprocessor">#include &quot;<a class="code" href="colorlabel_8h.html">colorlabel.h</a>&quot;</span>
 <a name="l00009"></a>00009 <span class="preprocessor">#include &quot;<a class="code" href="slicingview_8h.html">slicingview.h</a>&quot;</span>
 <a name="l00010"></a>00010 <span class="preprocessor">#include &quot;Volume.h&quot;</span>
-<a name="l00011"></a>00011 
-<a name="l00012"></a><a class="code" href="namespace_ui.html">00012</a> <span class="keyword">namespace </span>Ui {
-<a name="l00013"></a>00013     <span class="keyword">class </span><a class="code" href="class_main_window.html" title="The main window of the application. Also handles menu actions.">MainWindow</a>;
-<a name="l00014"></a>00014 }
-<a name="l00015"></a>00015 
-<a name="l00020"></a><a class="code" href="class_main_window.html">00020</a> <span class="keyword">class </span><a class="code" href="class_main_window.html" title="The main window of the application. Also handles menu actions.">MainWindow</a> : <span class="keyword">public</span> QMainWindow
-<a name="l00021"></a>00021 {
-<a name="l00022"></a>00022     Q_OBJECT
-<a name="l00023"></a>00023 
-<a name="l00024"></a>00024 <span class="keyword">public</span>:
-<a name="l00030"></a>00030     <span class="keyword">explicit</span> <a class="code" href="class_main_window.html#a8b244be8b7b7db1b08de2a2acb9409db" title="The default constructor.">MainWindow</a>(QWidget *parent = 0);
-<a name="l00035"></a>00035     <a class="code" href="class_main_window.html#ae98d00a93bc118200eeef9f9bba1dba7" title="Default destructor.">~MainWindow</a>();
-<a name="l00036"></a>00036 
-<a name="l00037"></a>00037 <span class="keyword">public</span> slots:
-<a name="l00042"></a>00042     <span class="keywordtype">void</span> <a class="code" href="class_main_window.html#abdf5858659ca66ece02000777d04f7ce" title="Sets default values for gradient editor points.">setDefault</a>();
-<a name="l00043"></a>00043 
-<a name="l00044"></a>00044 <span class="keyword">private</span> slots:
-<a name="l00050"></a>00050     <span class="keywordtype">void</span> on_slicingScrollBar_valueChanged(<span class="keywordtype">int</span> value);
-<a name="l00056"></a>00056     <span class="keywordtype">void</span> on_slicingComboBox_currentIndexChanged(<span class="keywordtype">int</span> index);
-<a name="l00061"></a>00061     <span class="keywordtype">void</span> on_actionBeenden_triggered();
-<a name="l00066"></a>00066     <span class="keywordtype">void</span> on_actionDatensatz_laden_triggered();
-<a name="l00067"></a>00067 
-<a name="l00068"></a>00068 <span class="keyword">private</span>:
-<a name="l00073"></a>00073     <span class="keywordtype">void</span> reset_slicing_scrollbar();
-<a name="l00078"></a>00078     <span class="keywordtype">void</span> update_slicing_view();
-<a name="l00079"></a>00079 
-<a name="l00080"></a>00080     Ui::MainWindow *ui; 
-<a name="l00082"></a>00082     Volume* volume; 
-<a name="l00084"></a>00084     GradientEditor *m_gradient_editor; 
-<a name="l00085"></a>00085     <a class="code" href="class_volume_renderer.html" title="Rendering view of the volume data.">VolumeRenderer</a> *m_volume_renderer; 
-<a name="l00087"></a>00087     <a class="code" href="class_color_label.html" title="A label that opens a color selection widget when pressed and displays the selected color...">ColorLabel</a> *m_lightColorLabel, *m_ambientColorLabel, *m_diffuseColorLabel, *m_specularColorLabel; 
-<a name="l00088"></a>00088 };
-<a name="l00089"></a>00089 
-<a name="l00090"></a>00090 <span class="preprocessor">#endif // MAINWINDOW_H</span>
-<a name="l00091"></a>00091 <span class="preprocessor"></span>
+<a name="l00011"></a>00011 <span class="preprocessor">#include &quot;<a class="code" href="renderingoptions_8h.html">renderingoptions.h</a>&quot;</span>
+<a name="l00012"></a>00012 
+<a name="l00013"></a><a class="code" href="namespace_ui.html">00013</a> <span class="keyword">namespace </span>Ui {
+<a name="l00014"></a>00014     <span class="keyword">class </span><a class="code" href="class_main_window.html" title="The main window of the application. Also handles menu actions.">MainWindow</a>;
+<a name="l00015"></a>00015 }
+<a name="l00016"></a>00016 
+<a name="l00017"></a>00017 
+<a name="l00022"></a><a class="code" href="class_main_window.html">00022</a> <span class="keyword">class </span><a class="code" href="class_main_window.html" title="The main window of the application. Also handles menu actions.">MainWindow</a> : <span class="keyword">public</span> QMainWindow
+<a name="l00023"></a>00023 {
+<a name="l00024"></a>00024     Q_OBJECT
+<a name="l00025"></a>00025 
+<a name="l00026"></a>00026 <span class="keyword">public</span>:
+<a name="l00032"></a>00032     <span class="keyword">explicit</span> <a class="code" href="class_main_window.html#a8b244be8b7b7db1b08de2a2acb9409db" title="The default constructor.">MainWindow</a>(QWidget *parent = 0);
+<a name="l00037"></a>00037     <a class="code" href="class_main_window.html#ae98d00a93bc118200eeef9f9bba1dba7" title="Default destructor.">~MainWindow</a>();
+<a name="l00038"></a>00038 
+<a name="l00039"></a>00039 <span class="keyword">public</span> slots:
+<a name="l00044"></a>00044     <span class="keywordtype">void</span> <a class="code" href="class_main_window.html#abdf5858659ca66ece02000777d04f7ce" title="Sets default values for gradient editor points.">setDefault</a>();
+<a name="l00045"></a>00045 
+<a name="l00046"></a>00046 <span class="keyword">private</span> slots:
+<a name="l00052"></a>00052    <span class="keywordtype">void</span> on_actionBild_speichern_triggered();
+<a name="l00053"></a>00053    <span class="keywordtype">void</span> on_slicingScrollBar_valueChanged(<span class="keywordtype">int</span> value);
+<a name="l00059"></a>00059     <span class="keywordtype">void</span> on_slicingComboBox_currentIndexChanged(<span class="keywordtype">int</span> index);
+<a name="l00064"></a>00064     <span class="keywordtype">void</span> on_actionBeenden_triggered();
+<a name="l00069"></a>00069     <span class="keywordtype">void</span> on_actionDatensatz_laden_triggered();
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071 <span class="keyword">private</span>:
+<a name="l00076"></a>00076     <span class="keywordtype">void</span> reset_slicing_scrollbar();
+<a name="l00081"></a>00081     <span class="keywordtype">void</span> update_slicing_view();
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083     Ui::MainWindow *ui; 
+<a name="l00085"></a>00085     Volume* volume; 
+<a name="l00086"></a>00086     <a class="code" href="struct_rendering_options.html">RenderingOptions</a> options;
+<a name="l00087"></a>00087 
+<a name="l00088"></a>00088     GradientEditor *m_gradient_editor; 
+<a name="l00089"></a>00089     <a class="code" href="class_volume_renderer.html" title="Rendering view of the volume data.">VolumeRenderer</a> *m_volume_renderer; 
+<a name="l00091"></a>00091     <a class="code" href="class_color_label.html" title="A label that opens a color selection widget when pressed and displays the selected color...">ColorLabel</a> *m_lightColorLabel, *m_ambientColorLabel, *m_diffuseColorLabel, *m_specularColorLabel; 
+<a name="l00093"></a>00093 <span class="keyword">private</span> slots:
+<a name="l00094"></a>00094     <span class="keywordtype">void</span> updateRenderingOptions();
+<a name="l00095"></a>00095     <span class="keywordtype">void</span> updateTransferFunction();
+<a name="l00096"></a>00096 };
+<a name="l00097"></a>00097 
+<a name="l00098"></a>00098 <span class="preprocessor">#endif // MAINWINDOW_H</span>
+<a name="l00099"></a>00099 <span class="preprocessor"></span>
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Fri Nov 5 2010 11:06:43 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Dec 6 2010 12:10:16 for LU Visualisierung WS2010 - Beispiel 1 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.2 </small></address>
 </body>
