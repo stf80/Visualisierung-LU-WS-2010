@@ -3,6 +3,12 @@
 
 #include <QColor>
 
+/**
+  * @brief Struct for storing rendering options.
+  *
+  * This is used to communicate rendering options between
+  * VolumeRenderer and MainWindow classes
+  */
 struct RenderingOptions
 {
     QColor light, ambient, diffuse, specular;
