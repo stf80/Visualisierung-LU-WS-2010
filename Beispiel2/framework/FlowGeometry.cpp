@@ -102,7 +102,13 @@ int FlowGeometry::getNearestVtx(vec3 pos)
             step /= 2;
         }
     }
+    if (index + 1 < dim[coord] &&
+        pos.v[coord] - getPos(getVtx(index, 0)).v[coord] >
+        getPos(getVtx(index + 1, 0)).v[coord] - pos.v[coord])
+        ++index;
+
     int indexX = index;
+
 
     index = 0, step = dim[1] / 2, coord = 1;
     while (step > 0)
@@ -114,6 +120,10 @@ int FlowGeometry::getNearestVtx(vec3 pos)
             step /= 2;
         }
     }
+    if (index + 1 < dim[coord] &&
+        pos.v[coord] - getPos(getVtx(0, index)).v[coord] >
+        getPos(getVtx(0, index + 1)).v[coord] - pos.v[coord])
+        ++index;
     int indexY = index;
 
     return getVtx(indexX, indexY);
