@@ -5,6 +5,7 @@
 #include <QtOpenGL>
 #include <QGLWidget>
 
+#include "mainwindow.h"
 #include "arthurwidgets.h"
 
 #include "FlowData.h"
@@ -15,7 +16,9 @@
  * @brief Rendering view of the volume data.
  *
 */
- class RenderingView : public QGLWidget
+ class RenderingView
+//     : public QGLWidget
+     : public QWidget
  {
      Q_OBJECT
 
@@ -25,7 +28,7 @@
       *
       * @param parent parent widget
      */
-     RenderingView(QWidget *parent = 0);
+     RenderingView(Ui::MainWindow *ui, QWidget *parent = 0);
 
      /**
       * @brief Default destructor.
@@ -38,14 +41,14 @@
           *
           * @param p the QPainter to use for drawing
          */
-         //void paint(QPainter *p);
+         void paint(QPainter *p);
 
          /**
           * @brief Invoked when the widget should redraw itself. Redraws the widget using paint().
           *
           * @param e the event causing the widget to redraw itself
          */
-         //void paintEvent(QPaintEvent *e);
+         void paintEvent(QPaintEvent *e);
 
          QSize minimumSizeHint() const;
          QSize sizeHint() const;
@@ -59,14 +62,18 @@
      public slots:
 
  protected:
+    /*
      virtual void initializeGL();
      virtual void paintGL();
      virtual void resizeGL(int width, int height);
+    */
 
  private:
+     Ui::MainWindow *ui;
+
      QGLShaderProgram *program;
 
-     int width, height; // witdh and height of viewport
+     // int width, height; // witdh and height of viewport
 
      FlowData *flowData;
      RenderingOptions *options;

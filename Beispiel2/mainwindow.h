@@ -4,7 +4,6 @@
 #include <QMainWindow>
 
 #include "gradients.h"
-#include "renderingview.h"
 #include "FlowData.h"
 #include "renderingoptions.h"
 
@@ -12,6 +11,9 @@ namespace Ui {
     class MainWindow;
 }
 
+//#include "renderingview.h"
+
+class RenderingView;
 
 /**
  * @brief The main window of the application. Also handles menu actions.

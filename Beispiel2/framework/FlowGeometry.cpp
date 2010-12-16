@@ -92,22 +92,31 @@ inline float FlowGeometry::getPosY(int vtxID)
 ///a very slow and dumb routine, that finds the nearest vertex to the given position
 int FlowGeometry::getNearestVtx(vec3 pos)
 {
-	//take the norm to the first vertex
-	float dist = pos.dist2(getPos(0));
-	//mark the vertex 0 as the closest one
-	int closest = 0;
-	float newd;
-	//Iterate through all vertices and search for the nearest one. I know, this is so inefficient, that you'll have to rewrite it :P
-	for (int i = 1; i < dim[0]*dim[1]; i++)
-	{
-		newd = pos.dist2(getPos(i));
-		if (newd < dist)
-		{
-			dist = newd;
-			closest = i;
-		}
-	}
-	return closest;
+    int index = 0, step = dim[0] / 2, coord = 0;
+    while (step > 0)
+    {
+        if (index + step < dim[coord] && getPos(getVtx(index + step, 0)).v[coord] < pos.v[coord])
+        {
+            index += step;
+        } else {
+            step /= 2;
+        }
+    }
+    int indexX = index;
+
+    index = 0, step = dim[1] / 2, coord = 1;
+    while (step > 0)
+    {
+        if (index + step < dim[coord] && getPos(getVtx(0, index + step)).v[coord] < pos.v[coord])
+        {
+            index += step;
+        } else {
+            step /= 2;
+        }
+    }
+    int indexY = index;
+
+    return getVtx(indexX, indexY);
 }
 
 bool FlowGeometry::getInterpolationAt(vec3 pos, int* vtxID, float* coef)

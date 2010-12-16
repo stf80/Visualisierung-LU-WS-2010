@@ -7,11 +7,14 @@
 #include <iostream>
 
 
-#include "RenderingView.h"
+#include "renderingview.h"
+#include "ui_mainwindow.h"
 
-RenderingView::RenderingView(QWidget *parent)
-    : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
+RenderingView::RenderingView(Ui::MainWindow *ui, QWidget *parent)
+//    : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
+    : QWidget(parent)
 {
+    this->ui = ui;
     flowData = 0;
     options = 0;
 }
@@ -24,13 +27,16 @@ RenderingView::~RenderingView()
 void RenderingView::setDataset(FlowData* dataset)
 {
     flowData = dataset;
+
+    update();
 }
 
 void RenderingView::setRenderingOptions(RenderingOptions *options)
 {
     this->options = options;
 
-    updateGL();
+    //updateGL();
+    update();
 }
 
 
@@ -45,7 +51,39 @@ void RenderingView::setRenderingOptions(RenderingOptions *options)
      return QSize(400, 400);
  }
 
+ void RenderingView::paintEvent(QPaintEvent *e)
+ {
+     if (! flowData)
+         return;
 
+     QPainter painter(this);
+
+      if (ui->colorCodingActive->isEnabled())
+      {
+
+          QImage colorCodingImage(width(), height(), QImage::Format_ARGB32);
+
+         colorCodingImage.fill(0x0000FF00);
+
+         FlowChannel *channel = flowData->getChannel(ui->colorCodingChannel->value());
+
+         if (channel && channel->getRange() > 0) {
+             for (int y = 0; y < height(); ++y)
+                 for (int x = 0; x < width(); ++x)
+                 {
+                     float rawValue = channel->getValueNormPos(((float) x) / width(), ((float) y) / height());
+                     float normValue = channel->normalizeValue(rawValue);
+
+                     colorCodingImage.setPixel(x, y, QColor(normValue * 255, normValue * 255, normValue * 255).rgba());
+                 }
+
+                painter.drawImage(0, 0, colorCodingImage);
+        }
+     }
+
+ }
+
+/*
  void RenderingView::initializeGL()
  {
      glewInit();
@@ -96,7 +134,6 @@ void RenderingView::setRenderingOptions(RenderingOptions *options)
  {
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
  }
 
  void RenderingView::resizeGL(int width, int height)
@@ -109,3 +146,4 @@ void RenderingView::setRenderingOptions(RenderingOptions *options)
 
  }
 
+*/
