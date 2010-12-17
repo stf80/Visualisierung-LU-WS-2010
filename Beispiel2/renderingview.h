@@ -11,6 +11,7 @@
 #include "FlowData.h"
 #include "renderingoptions.h"
 
+const double PI = 3.14159265358979323846;
 
 /**
  * @brief Rendering view of the volume data.

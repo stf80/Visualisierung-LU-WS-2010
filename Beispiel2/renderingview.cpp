@@ -11,7 +11,7 @@
 #include "ui_mainwindow.h"
 
 RenderingView::RenderingView(Ui::MainWindow *ui, QWidget *parent)
-//    : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
+        //    : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
     : QWidget(parent)
 {
     this->ui = ui;
@@ -41,47 +41,105 @@ void RenderingView::setRenderingOptions(RenderingOptions *options)
 
 
 
- QSize RenderingView::minimumSizeHint() const
- {
-     return QSize(200, 200);
- }
+QSize RenderingView::minimumSizeHint() const
+{
+    return QSize(200, 200);
+}
 
- QSize RenderingView::sizeHint() const
- {
-     return QSize(400, 400);
- }
+QSize RenderingView::sizeHint() const
+{
+    return QSize(400, 400);
+}
 
- void RenderingView::paintEvent(QPaintEvent *e)
- {
-     if (! flowData)
-         return;
+void RenderingView::paintEvent(QPaintEvent *e)
+{
+    if (! flowData)
+        return;
 
-     QPainter painter(this);
+    float widgetAspectRatio = ((float) width()) / height();
+    float dataAspectRatio = (flowData->getMaxX() - flowData->getMinX()) /
+                            (flowData->getMaxY() - flowData->getMinY());
 
-      if (ui->colorCodingActive->isEnabled())
-      {
+    int w, h;
+    if ( widgetAspectRatio > dataAspectRatio)
+    {
+        h = height();
+        w = h * dataAspectRatio;
+    } else {
+        w = width();
+        h = w / dataAspectRatio;
+    }
 
-          QImage colorCodingImage(width(), height(), QImage::Format_ARGB32);
+    QPainter painter(this);
 
-         colorCodingImage.fill(0x0000FF00);
+    if (ui->colorCodingActive->isChecked())
+    {
+        FlowChannel *channel = flowData->getChannel(ui->colorCodingChannel->value());
 
-         FlowChannel *channel = flowData->getChannel(ui->colorCodingChannel->value());
+        if (channel && channel->getRange() > 0) {
 
-         if (channel && channel->getRange() > 0) {
-             for (int y = 0; y < height(); ++y)
-                 for (int x = 0; x < width(); ++x)
-                 {
-                     float rawValue = channel->getValueNormPos(((float) x) / width(), ((float) y) / height());
-                     float normValue = channel->normalizeValue(rawValue);
+            QImage colorCodingImage(w, h, QImage::Format_ARGB32);
 
-                     colorCodingImage.setPixel(x, y, QColor(normValue * 255, normValue * 255, normValue * 255).rgba());
-                 }
+            colorCodingImage.fill(0x0000FF00);
 
-                painter.drawImage(0, 0, colorCodingImage);
+            for (int y = 0; y < h; ++y)
+            {
+                for (int x = 0; x < w; ++x)
+                {
+                    float rawValue = channel->getValueNormPos(((float) x) / w, ((float) y) / h);
+                    float normValue = channel->normalizeValue(rawValue);
+
+                    colorCodingImage.setPixel(x, y, QColor(normValue * 255, normValue * 255, normValue * 255).rgba());
+                }
+            }
+
+            painter.drawImage((width() - w) / 2, (height() - h) / 2, colorCodingImage);
         }
-     }
+    }
 
- }
+    if (ui->arrowPlotActive->isChecked())
+    {
+        FlowChannel *channelX = flowData->getChannel(ui->arrowPlotChannelX->value());
+        FlowChannel *channelY = flowData->getChannel(ui->arrowPlotChannelY->value());
+
+        if (channelX && channelY) {
+            // TODO: try QImage::Format_ARGB32_Premultiplied for better performance,
+            // or painting on QGLWidget (with OpenGL backend) instead of QImage
+            QImage arrowPlotImage(w, h, QImage::Format_ARGB32);
+            arrowPlotImage.fill(0x00000000);
+
+            QPainter arrowPlotPainter(&arrowPlotImage);
+            arrowPlotPainter.setRenderHint(QPainter::Antialiasing);
+            arrowPlotPainter.setBrush(Qt::black);
+
+            int dist = ui->arrowPlotDistance->value();
+            const QPointF arrowPoints[] = {
+                QPointF(0, dist / 2.f),
+                QPointF(-dist / 3.f, -dist / 2.f),
+                QPointF( dist / 3.f, -dist / 2.f)
+            };
+
+            for (int y = dist / 2; y < h; y += dist)
+            {
+                for (int x = dist / 2; x < w; x += dist)
+                {
+                    float rawValueX = channelX->getValueNormPos(((float) x) / w, ((float) y) / h);
+                    //float normValueX = channelX->normalizeValue(rawValueX);
+                    float rawValueY = channelY->getValueNormPos(((float) x) / w, ((float) y) / h);
+                    //float normValueY = channelY->normalizeValue(rawValueY);
+
+                    arrowPlotPainter.save();
+                    arrowPlotPainter.translate(x, y);
+                    arrowPlotPainter.rotate(atan2(rawValueY, rawValueX) * 360 / PI);
+                    arrowPlotPainter.drawPolygon(arrowPoints, 3);
+                    arrowPlotPainter.restore();
+                }
+            }
+
+            painter.drawImage((width() - w) / 2, (height() - h) / 2, arrowPlotImage);
+        }
+    }
+}
 
 /*
  void RenderingView::initializeGL()

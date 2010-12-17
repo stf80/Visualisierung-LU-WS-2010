@@ -188,3 +188,12 @@ int FlowData::getNumTimesteps()
 {
 	return timesteps;
 }
+
+
+float FlowData::getMinX() { return geometry.getMinX(); }
+
+float FlowData::getMaxX() { return geometry.getMaxX(); }
+
+float FlowData::getMinY() { return geometry.getMinY(); }
+
+float FlowData::getMaxY() { return geometry.getMaxY(); }

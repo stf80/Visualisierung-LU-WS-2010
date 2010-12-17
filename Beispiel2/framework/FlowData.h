@@ -38,7 +38,17 @@ public:
     
     ///Returns the number of timesteps
     int getNumTimesteps();
-    
+
+
+    ///returns the minimum in the X dimension
+    float getMinX();
+    ///returns the maximum in the X dimension
+    float getMaxX();
+    ///returns the minimum in the Y dimension
+    float getMinY();
+    ///returns the maximum in the Y dimension
+    float getMaxY();
+
     //channels stuff
 	///creates a new channel and returns it's address in the channels array (line 28)
 	int createChannel();

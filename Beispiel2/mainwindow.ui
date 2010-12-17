@@ -56,7 +56,11 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSpinBox" name="colorCodingChannel"/>
+           <widget class="QSpinBox" name="colorCodingChannel">
+            <property name="value">
+             <number>3</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -79,13 +83,13 @@
         <property name="title">
          <string>Arrow Plot</string>
         </property>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>60</x>
            <y>30</y>
            <width>103</width>
-           <height>71</height>
+           <height>101</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout">
@@ -117,7 +121,31 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QSpinBox" name="arrowPlotChannelY"/>
+           <widget class="QSpinBox" name="arrowPlotChannelY">
+            <property name="value">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Distance</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QSpinBox" name="arrowPlotDistance">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="singleStep">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>10</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
