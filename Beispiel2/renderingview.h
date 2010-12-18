@@ -58,9 +58,9 @@ const double PI = 3.14159265358979323846;
 
  public:
     void setDataset(FlowData* dataset);
-    void setRenderingOptions(RenderingOptions *options);
 
      public slots:
+        void updateDerivedChannels();
 
  protected:
     /*
@@ -77,8 +77,8 @@ const double PI = 3.14159265358979323846;
      // int width, height; // witdh and height of viewport
 
      FlowData *flowData;
-     RenderingOptions *options;
 
+     int channelVectorLength;
  };
 
 #endif // RenderingView_H

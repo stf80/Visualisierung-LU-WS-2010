@@ -16,7 +16,8 @@ RenderingView::RenderingView(Ui::MainWindow *ui, QWidget *parent)
 {
     this->ui = ui;
     flowData = 0;
-    options = 0;
+
+    channelVectorLength = -1;
 }
 
 RenderingView::~RenderingView()
@@ -28,17 +29,25 @@ void RenderingView::setDataset(FlowData* dataset)
 {
     flowData = dataset;
 
+    channelVectorLength = -1;
+
+    updateDerivedChannels();
+
     update();
 }
 
-void RenderingView::setRenderingOptions(RenderingOptions *options)
+void RenderingView::updateDerivedChannels()
 {
-    this->options = options;
+    if (channelVectorLength >= 0)
+        flowData->deleteChannel(channelVectorLength);
 
-    //updateGL();
+    channelVectorLength = flowData->createChannelVectorLength(
+            ui->arrowPlotChannelX->value(), ui->arrowPlotChannelY->value(), -1);
+
+    ui->arrowPlotChannelLength->setText(QString::number(channelVectorLength));
+
     update();
 }
-
 
 
 QSize RenderingView::minimumSizeHint() const
@@ -121,16 +130,33 @@ void RenderingView::paintEvent(QPaintEvent *e)
 
             for (int y = dist / 2; y < h; y += dist)
             {
+                float normPosY = ((float) y) / h;
+
                 for (int x = dist / 2; x < w; x += dist)
                 {
-                    float rawValueX = channelX->getValueNormPos(((float) x) / w, ((float) y) / h);
+                    float normPosX = ((float) x) / w;
+
+                    float rawValueX = channelX->getValueNormPos(normPosX, normPosY);
                     //float normValueX = channelX->normalizeValue(rawValueX);
-                    float rawValueY = channelY->getValueNormPos(((float) x) / w, ((float) y) / h);
+                    float rawValueY = channelY->getValueNormPos(normPosX, normPosY);
                     //float normValueY = channelY->normalizeValue(rawValueY);
 
                     arrowPlotPainter.save();
+
                     arrowPlotPainter.translate(x, y);
                     arrowPlotPainter.rotate(atan2(rawValueY, rawValueX) * 360 / PI);
+
+                    if (ui->arrowPlotScale->isChecked())
+                    {
+                        FlowChannel *channelLength = flowData->getChannel(channelVectorLength);
+
+                        float rawValueLength = channelLength->getValueNormPos(normPosX, normPosY);
+                        float normValueLength = channelLength->normalizeValue(rawValueLength);
+
+                        float scale = sqrt(normValueLength);
+                        arrowPlotPainter.scale(scale, scale);
+                    }
+
                     arrowPlotPainter.drawPolygon(arrowPoints, 3);
                     arrowPlotPainter.restore();
                 }

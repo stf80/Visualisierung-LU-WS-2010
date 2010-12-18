@@ -12,8 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // transfer function editor
-    setWindowTitle(tr("Visualisierung LU 2"));
+    setWindowTitle(tr("LU Visualisierung 2010, Beispiel 2"));
 
     renderingView = new RenderingView(ui, ui->rendererGroupBox);
     ui->renderingLayout->addWidget(renderingView);
@@ -21,6 +20,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->colorCodingActive, SIGNAL(toggled(bool)),
             renderingView, SLOT(update()));
     connect(ui->colorCodingChannel, SIGNAL(valueChanged(int)),
+            renderingView, SLOT(update()));
+
+    connect(ui->arrowPlotActive, SIGNAL(toggled(bool)),
+            renderingView, SLOT(update()));
+    connect(ui->arrowPlotChannelX, SIGNAL(valueChanged(int)),
+            renderingView, SLOT(updateDerivedChannels()));
+    connect(ui->arrowPlotChannelY, SIGNAL(valueChanged(int)),
+            renderingView, SLOT(updateDerivedChannels()));
+    connect(ui->arrowPlotDistance, SIGNAL(valueChanged(int)),
+            renderingView, SLOT(update()));
+    connect(ui->arrowPlotScale, SIGNAL(toggled(bool)),
             renderingView, SLOT(update()));
 }
 
