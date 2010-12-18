@@ -89,11 +89,14 @@ QSize RenderingView::sizeHint() const
 
 QRgb RenderingView::normValueToRGB(float normValue, int gradient)
 {
-    switch (gradient) // grayscale
+    switch (gradient)
     {
     default:
-    case 0:
+    case 0: // grayscale
         return QColor(normValue * 255, normValue * 255, normValue * 255).rgba();
+        break;
+    case 1: // heat
+        return QColor(normValue * 255, 255 - normValue * 255, 0).rgba();
         break;
     // TODO: other gradients
     }

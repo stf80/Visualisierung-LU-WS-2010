@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
             renderingView, SLOT(updateColorCoding()));
     connect(ui->colorCodingChannel, SIGNAL(valueChanged(int)),
             renderingView, SLOT(updateColorCoding()));
+    connect(ui->colorCodingGradient, SIGNAL(currentIndexChanged(int)),
+            renderingView, SLOT(updateColorCoding()));
 
     connect(ui->arrowPlotActive, SIGNAL(toggled(bool)),
             renderingView, SLOT(updateArrowPlot()));
