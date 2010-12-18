@@ -49,6 +49,11 @@ public:
     ///returns the maximum in the Y dimension
     float getMaxY();
 
+    ///compression of coordinates in each dimension separately, returns values scaled to <0,1>
+    vec3 normalizeCoords(vec3 pos);
+    ///inverts the compression. From values of <0,1> it restores the real geometrical coordinates
+    vec3 unNormalizeCoords(vec3 pos);
+
     //channels stuff
 	///creates a new channel and returns it's address in the channels array (line 28)
 	int createChannel();

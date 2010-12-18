@@ -123,9 +123,9 @@ void RenderingView::paintEvent(QPaintEvent *e)
 
             int dist = ui->arrowPlotDistance->value();
             const QPointF arrowPoints[] = {
-                QPointF(0, dist / 2.f),
-                QPointF(-dist / 3.f, -dist / 2.f),
-                QPointF( dist / 3.f, -dist / 2.f)
+                QPointF(dist / 2.f, 0),
+                QPointF(-dist / 2.f, -dist / 3.f),
+                QPointF(-dist / 2.f,  dist / 3.f)
             };
 
             for (int y = dist / 2; y < h; y += dist)
@@ -144,7 +144,7 @@ void RenderingView::paintEvent(QPaintEvent *e)
                     arrowPlotPainter.save();
 
                     arrowPlotPainter.translate(x, y);
-                    arrowPlotPainter.rotate(atan2(rawValueY, rawValueX) * 360 / PI);
+                    arrowPlotPainter.rotate(atan2(rawValueY, rawValueX) * 180 / PI);
 
                     if (ui->arrowPlotScale->isChecked())
                     {
@@ -153,6 +153,7 @@ void RenderingView::paintEvent(QPaintEvent *e)
                         float rawValueLength = channelLength->getValueNormPos(normPosX, normPosY);
                         float normValueLength = channelLength->normalizeValue(rawValueLength);
 
+                        // scale area, not length of vectors
                         float scale = sqrt(normValueLength);
                         arrowPlotPainter.scale(scale, scale);
                     }
@@ -163,6 +164,79 @@ void RenderingView::paintEvent(QPaintEvent *e)
             }
 
             painter.drawImage((width() - w) / 2, (height() - h) / 2, arrowPlotImage);
+        }
+    }
+
+    if (ui->streamlinesActive->isChecked())
+    {
+        FlowChannel *channelX = flowData->getChannel(ui->arrowPlotChannelX->value());
+        FlowChannel *channelY = flowData->getChannel(ui->arrowPlotChannelY->value());
+
+        if (channelX && channelY) {
+            // TODO: try QImage::Format_ARGB32_Premultiplied for better performance,
+            // or painting on QGLWidget (with OpenGL backend) instead of QImage
+            QImage streamlinesImage(w, h, QImage::Format_ARGB32);
+            streamlinesImage.fill(0x00000000);
+
+            QPainter streamlinesPainter(&streamlinesImage);
+            streamlinesPainter.setRenderHint(QPainter::Antialiasing);
+            streamlinesPainter.setBrush(Qt::black);
+
+            float dt = ui->streamlinesTimeStep->value();
+
+            if (ui->streamlinesSpacing->currentIndex() == 0) // regular spacing
+            {
+                int dist = ui->streamlinesDistance->value();
+
+                for (int y = dist / 2; y < h; y += dist)
+                {
+                    float normPosY = ((float) y) / h;
+
+                    for (int x = dist / 2; x < w; x += dist)
+                    {
+                        float normPosX = ((float) x) / w;
+
+                        // perform integration in geometry coordinates
+                        vec3 pos = flowData->unNormalizeCoords(vec3(normPosX, normPosY, 0));
+
+                        float t = 0, tMax = 100 * dt;
+
+                        // TODO integrate in both directions
+                        while (pos.v[0] >= flowData->getMinX() && pos.v[0] <= flowData->getMaxX()
+                               && pos.v[1] >= flowData->getMinY() && pos.v[1] <= flowData->getMaxY()
+                               && t <= tMax)
+                        {
+
+                                    float rawValueX = channelX->getValue(pos);
+                                    float rawValueY = channelY->getValue(pos);
+
+                                    vec3 newPos;
+                                    if (ui->streamlinesIntegration->currentIndex() == 0) // Euler
+                                    {
+                                        vec3 v = vec3(rawValueX, rawValueY, 0) * dt;
+                                        newPos = pos + v;
+                                    } else { // TODO: Runge-Kutta
+                                    }
+
+                                    if (pos == newPos) // singularity
+                                        break;
+
+                                    // transform real geometrical coordinates to pixel coordinates
+                                    vec3 v1 = flowData->normalizeCoords(pos),
+                                        v2 = flowData->normalizeCoords(newPos);
+
+                                    streamlinesPainter.drawLine(QPointF(v1.v[0] * w, v1.v[1] * h),
+                                                                QPointF(v2.v[0] * w, v2.v[1] * h));
+
+                                    t += dt;
+                                    pos = newPos;
+                        }
+                    }
+                }
+            } else { // TODO: evenly-spaced streamlines
+            }
+
+            painter.drawImage((width() - w) / 2, (height() - h) / 2, streamlinesImage);
         }
     }
 }

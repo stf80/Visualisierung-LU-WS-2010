@@ -197,3 +197,7 @@ float FlowData::getMaxX() { return geometry.getMaxX(); }
 float FlowData::getMinY() { return geometry.getMinY(); }
 
 float FlowData::getMaxY() { return geometry.getMaxY(); }
+
+vec3 FlowData::normalizeCoords(vec3 pos) { return geometry.normalizeCoords(pos); }
+
+vec3 FlowData::unNormalizeCoords(vec3 pos) { return geometry.unNormalizeCoords(pos); }
