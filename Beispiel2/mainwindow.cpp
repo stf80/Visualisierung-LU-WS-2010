@@ -18,20 +18,37 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->renderingLayout->addWidget(renderingView);
 
     connect(ui->colorCodingActive, SIGNAL(toggled(bool)),
-            renderingView, SLOT(update()));
+            renderingView, SLOT(updateColorCoding()));
     connect(ui->colorCodingChannel, SIGNAL(valueChanged(int)),
-            renderingView, SLOT(update()));
+            renderingView, SLOT(updateColorCoding()));
 
     connect(ui->arrowPlotActive, SIGNAL(toggled(bool)),
-            renderingView, SLOT(update()));
+            renderingView, SLOT(updateArrowPlot()));
     connect(ui->arrowPlotChannelX, SIGNAL(valueChanged(int)),
             renderingView, SLOT(updateDerivedChannels()));
     connect(ui->arrowPlotChannelY, SIGNAL(valueChanged(int)),
             renderingView, SLOT(updateDerivedChannels()));
     connect(ui->arrowPlotDistance, SIGNAL(valueChanged(int)),
-            renderingView, SLOT(update()));
+            renderingView, SLOT(updateArrowPlot()));
     connect(ui->arrowPlotScale, SIGNAL(toggled(bool)),
-            renderingView, SLOT(update()));
+            renderingView, SLOT(updateArrowPlot()));
+
+    connect(ui->streamlinesActive, SIGNAL(toggled(bool)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesDistance, SIGNAL(valueChanged(int)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesDSep, SIGNAL(valueChanged(double)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesDTest, SIGNAL(valueChanged(double)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesIntegration, SIGNAL(currentIndexChanged(int)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesSpacing, SIGNAL(currentIndexChanged(int)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesTimeStep, SIGNAL(valueChanged(double)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesSteps, SIGNAL(valueChanged(int)),
+            renderingView, SLOT(updateStreamlines()));
 }
 
 MainWindow::~MainWindow()

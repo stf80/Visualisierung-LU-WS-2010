@@ -6,10 +6,8 @@
 #include <QGLWidget>
 
 #include "mainwindow.h"
-#include "arthurwidgets.h"
 
 #include "FlowData.h"
-#include "renderingoptions.h"
 
 const double PI = 3.14159265358979323846;
 
@@ -17,68 +15,78 @@ const double PI = 3.14159265358979323846;
  * @brief Rendering view of the volume data.
  *
 */
- class RenderingView
-//     : public QGLWidget
-     : public QWidget
- {
-     Q_OBJECT
+class RenderingView
+        //     : public QGLWidget
+    : public QWidget
+{
+    Q_OBJECT
 
- public:
-     /**
+public:
+    /**
       * @brief Default constructor
       *
       * @param parent parent widget
      */
-     RenderingView(Ui::MainWindow *ui, QWidget *parent = 0);
+    RenderingView(Ui::MainWindow *ui, QWidget *parent = 0);
 
-     /**
+    /**
       * @brief Default destructor.
       *
      */
-     ~RenderingView();
+    ~RenderingView();
 
-         /**
+    /**
           * @brief Redraws the rendering view onto an arbitrary device using a QPainter.
           *
           * @param p the QPainter to use for drawing
          */
-         void paint(QPainter *p);
+    void paint(QPainter *p);
 
-         /**
+    /**
           * @brief Invoked when the widget should redraw itself. Redraws the widget using paint().
           *
           * @param e the event causing the widget to redraw itself
          */
-         void paintEvent(QPaintEvent *e);
+    void paintEvent(QPaintEvent *e);
 
-         QSize minimumSizeHint() const;
-         QSize sizeHint() const;
+    QSize minimumSizeHint() const;
+    QSize sizeHint() const;
 
 
 
- public:
+public:
     void setDataset(FlowData* dataset);
 
-     public slots:
-        void updateDerivedChannels();
+public slots:
+    void updateDerivedChannels();
+    void updateColorCoding();
+    void updateArrowPlot();
+    void updateStreamlines();
 
- protected:
+protected:
     /*
      virtual void initializeGL();
      virtual void paintGL();
      virtual void resizeGL(int width, int height);
     */
 
- private:
-     Ui::MainWindow *ui;
+private:
+    /// maps a normalized value to an ARGB color using a given gradient function
+    QRgb normValueToRGB(float normValue, int gradient);
 
-     QGLShaderProgram *program;
+    Ui::MainWindow *ui;
 
-     // int width, height; // witdh and height of viewport
+    QGLShaderProgram *program;
 
-     FlowData *flowData;
+    // int width, height; // witdh and height of viewport
 
-     int channelVectorLength;
- };
+    FlowData *flowData;
+
+    int channelVectorLength;
+
+    bool colorCodingNeedsUpdate, arrowPlotNeedsUpdate, streamlinesNeedsUpdate;
+
+    QImage colorCodingImage, arrowPlotImage, streamlinesImage;
+};
 
 #endif // RenderingView_H

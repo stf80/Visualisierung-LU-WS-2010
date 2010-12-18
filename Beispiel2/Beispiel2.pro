@@ -13,11 +13,6 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     renderingview.cpp \
-    gradients/gradients.cpp \
-    gradients/arthurwidgets.cpp \
-    gradients/arthurstyle.cpp \
-    gradients/hoverpoints.cpp \
-    renderingoptions.cpp \
     glew.c \
     framework/textfile.cpp \
     framework/FlowGeometry.cpp \
@@ -27,11 +22,6 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     renderingview.h \
-    gradients/gradients.h \
-    gradients/arthurwidgets.h \
-    gradients/arthurstyle.h \
-    gradients/hoverpoints.h \
-    renderingoptions.h \
     GL/glew.h \
     framework/FlowChannel.h \
     framework/textfile.h \

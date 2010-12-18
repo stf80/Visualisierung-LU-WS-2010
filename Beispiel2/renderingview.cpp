@@ -18,6 +18,10 @@ RenderingView::RenderingView(Ui::MainWindow *ui, QWidget *parent)
     flowData = 0;
 
     channelVectorLength = -1;
+
+    colorCodingNeedsUpdate = true;
+    arrowPlotNeedsUpdate = true;
+    streamlinesNeedsUpdate = true;
 }
 
 RenderingView::~RenderingView()
@@ -46,8 +50,31 @@ void RenderingView::updateDerivedChannels()
 
     ui->arrowPlotChannelLength->setText(QString::number(channelVectorLength));
 
+    colorCodingNeedsUpdate = true;
+    arrowPlotNeedsUpdate = true;
+    streamlinesNeedsUpdate = true;
+
     update();
 }
+
+void RenderingView::updateColorCoding()
+{
+    colorCodingNeedsUpdate = true;
+    update();
+}
+
+void RenderingView::updateArrowPlot()
+{
+    arrowPlotNeedsUpdate = true;
+    update();
+}
+
+void RenderingView::updateStreamlines()
+{
+    streamlinesNeedsUpdate = true;
+    update();
+}
+
 
 
 QSize RenderingView::minimumSizeHint() const
@@ -58,6 +85,18 @@ QSize RenderingView::minimumSizeHint() const
 QSize RenderingView::sizeHint() const
 {
     return QSize(400, 400);
+}
+
+QRgb RenderingView::normValueToRGB(float normValue, int gradient)
+{
+    switch (gradient) // grayscale
+    {
+    default:
+    case 0:
+        return QColor(normValue * 255, normValue * 255, normValue * 255).rgba();
+        break;
+    // TODO: other gradients
+    }
 }
 
 void RenderingView::paintEvent(QPaintEvent *e)
@@ -79,17 +118,33 @@ void RenderingView::paintEvent(QPaintEvent *e)
         h = w / dataAspectRatio;
     }
 
+    // check if images need resizing
+    static int prevW = 0, prevH = 0;
+    if (w != prevW || h != prevH)
+    {
+        colorCodingImage = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
+        arrowPlotImage = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
+        streamlinesImage = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
+
+        colorCodingNeedsUpdate = true;
+        arrowPlotNeedsUpdate = true;
+        streamlinesNeedsUpdate = true;
+
+        prevW = w;
+        prevH = h;
+    }
+
     QPainter painter(this);
 
     if (ui->colorCodingActive->isChecked())
     {
         FlowChannel *channel = flowData->getChannel(ui->colorCodingChannel->value());
 
-        if (channel && channel->getRange() > 0) {
-
-            QImage colorCodingImage(w, h, QImage::Format_ARGB32);
-
+        if (colorCodingNeedsUpdate && channel && channel->getRange() > 0)
+        {
             colorCodingImage.fill(0x0000FF00);
+
+            int gradient = ui->colorCodingGradient->currentIndex();
 
             for (int y = 0; y < h; ++y)
             {
@@ -98,12 +153,14 @@ void RenderingView::paintEvent(QPaintEvent *e)
                     float rawValue = channel->getValueNormPos(((float) x) / w, ((float) y) / h);
                     float normValue = channel->normalizeValue(rawValue);
 
-                    colorCodingImage.setPixel(x, y, QColor(normValue * 255, normValue * 255, normValue * 255).rgba());
+                    colorCodingImage.setPixel(x, y, normValueToRGB(normValue, gradient));
                 }
             }
 
-            painter.drawImage((width() - w) / 2, (height() - h) / 2, colorCodingImage);
+            colorCodingNeedsUpdate = false;
         }
+
+        painter.drawImage((width() - w) / 2, (height() - h) / 2, colorCodingImage);
     }
 
     if (ui->arrowPlotActive->isChecked())
@@ -111,10 +168,9 @@ void RenderingView::paintEvent(QPaintEvent *e)
         FlowChannel *channelX = flowData->getChannel(ui->arrowPlotChannelX->value());
         FlowChannel *channelY = flowData->getChannel(ui->arrowPlotChannelY->value());
 
-        if (channelX && channelY) {
+        if (arrowPlotNeedsUpdate && channelX && channelY) {
             // TODO: try QImage::Format_ARGB32_Premultiplied for better performance,
             // or painting on QGLWidget (with OpenGL backend) instead of QImage
-            QImage arrowPlotImage(w, h, QImage::Format_ARGB32);
             arrowPlotImage.fill(0x00000000);
 
             QPainter arrowPlotPainter(&arrowPlotImage);
@@ -160,11 +216,13 @@ void RenderingView::paintEvent(QPaintEvent *e)
 
                     arrowPlotPainter.drawPolygon(arrowPoints, 3);
                     arrowPlotPainter.restore();
-                }
+                }                
             }
 
-            painter.drawImage((width() - w) / 2, (height() - h) / 2, arrowPlotImage);
+            arrowPlotNeedsUpdate = false;
         }
+
+        painter.drawImage((width() - w) / 2, (height() - h) / 2, arrowPlotImage);
     }
 
     if (ui->streamlinesActive->isChecked())
@@ -172,10 +230,7 @@ void RenderingView::paintEvent(QPaintEvent *e)
         FlowChannel *channelX = flowData->getChannel(ui->arrowPlotChannelX->value());
         FlowChannel *channelY = flowData->getChannel(ui->arrowPlotChannelY->value());
 
-        if (channelX && channelY) {
-            // TODO: try QImage::Format_ARGB32_Premultiplied for better performance,
-            // or painting on QGLWidget (with OpenGL backend) instead of QImage
-            QImage streamlinesImage(w, h, QImage::Format_ARGB32);
+        if (streamlinesNeedsUpdate && channelX && channelY) {
             streamlinesImage.fill(0x00000000);
 
             QPainter streamlinesPainter(&streamlinesImage);
@@ -199,45 +254,60 @@ void RenderingView::paintEvent(QPaintEvent *e)
                         // perform integration in geometry coordinates
                         vec3 pos = flowData->unNormalizeCoords(vec3(normPosX, normPosY, 0));
 
-                        float t = 0, tMax = 100 * dt;
+                        int steps = 0;
 
                         // TODO integrate in both directions
                         while (pos.v[0] >= flowData->getMinX() && pos.v[0] <= flowData->getMaxX()
-                               && pos.v[1] >= flowData->getMinY() && pos.v[1] <= flowData->getMaxY()
-                               && t <= tMax)
+                            && pos.v[1] >= flowData->getMinY() && pos.v[1] <= flowData->getMaxY()
+                            && steps < ui->streamlinesSteps->value())
                         {
 
-                                    float rawValueX = channelX->getValue(pos);
-                                    float rawValueY = channelY->getValue(pos);
+                            float rawValueX = channelX->getValue(pos);
+                            float rawValueY = channelY->getValue(pos);
 
-                                    vec3 newPos;
-                                    if (ui->streamlinesIntegration->currentIndex() == 0) // Euler
-                                    {
-                                        vec3 v = vec3(rawValueX, rawValueY, 0) * dt;
-                                        newPos = pos + v;
-                                    } else { // TODO: Runge-Kutta
-                                    }
+                            vec3 newPos;
+                            if (ui->streamlinesIntegration->currentIndex() == 0) // Euler
+                            {
+                                vec3 v = vec3(rawValueX, rawValueY, 0) * dt;
+                                newPos = pos + v;
+                            } else { // 2nd order Runge-Kutta
+                                vec3 v = vec3(rawValueX, rawValueY, 0) * dt;
+                                vec3 midPoint = pos + v * 0.5f;
 
-                                    if (pos == newPos) // singularity
-                                        break;
+                                if (midPoint.v[0] >= flowData->getMinX() && midPoint.v[0] <= flowData->getMaxX()
+                                    && midPoint.v[1] >= flowData->getMinY() && midPoint.v[1] <= flowData->getMaxY())
+                                {
+                                    float newRawValueX = channelX->getValue(midPoint);
+                                    float newRawValueY = channelY->getValue(midPoint);
 
-                                    // transform real geometrical coordinates to pixel coordinates
-                                    vec3 v1 = flowData->normalizeCoords(pos),
-                                        v2 = flowData->normalizeCoords(newPos);
+                                    v = vec3(newRawValueX, newRawValueY, 0) * dt;
+                                    newPos = pos + v;
+                                } else
+                                    newPos = pos;
+                            }
 
-                                    streamlinesPainter.drawLine(QPointF(v1.v[0] * w, v1.v[1] * h),
-                                                                QPointF(v2.v[0] * w, v2.v[1] * h));
+                            if (pos == newPos) // singularity
+                                break;
 
-                                    t += dt;
-                                    pos = newPos;
+                            // transform real geometrical coordinates to pixel coordinates
+                            vec3 v1 = flowData->normalizeCoords(pos),
+                            v2 = flowData->normalizeCoords(newPos);
+
+                            streamlinesPainter.drawLine(QPointF(v1.v[0] * w, v1.v[1] * h),
+                                                        QPointF(v2.v[0] * w, v2.v[1] * h));
+
+                            ++steps;
+                            pos = newPos;
                         }
                     }
                 }
             } else { // TODO: evenly-spaced streamlines
             }
 
-            painter.drawImage((width() - w) / 2, (height() - h) / 2, streamlinesImage);
+            streamlinesNeedsUpdate = false;
         }
+
+        painter.drawImage((width() - w) / 2, (height() - h) / 2, streamlinesImage);
     }
 }
 

@@ -3,9 +3,7 @@
 
 #include <QMainWindow>
 
-#include "gradients.h"
 #include "FlowData.h"
-#include "renderingoptions.h"
 
 namespace Ui {
     class MainWindow;
