@@ -136,15 +136,65 @@ bool FlowGeometry::getInterpolationAt(vec3 pos, int* vtxID, float* coef)
     if ((pos[0]<boundaryMin[0])||(pos[1]<boundaryMin[1])||(pos[0]>boundaryMax[0])||(pos[1]>boundaryMax[1]))
         return false;
 
-	//example of a low-quality lookup with no interpolation
-	vtxID[0] = getNearestVtx(pos); //finds the nearest vertex to the given position and returns it's value as the dominanting one. The getNearestVtx needs to be improved to gain some speed.
-    vtxID[1] = 0;
-    vtxID[2] = 0;
-    vtxID[3] = 0;        
-    coef[0] = 1.0f;
-    coef[1] = 0.0f;
-    coef[2] = 0.0f;
-    coef[3] = 0.0f;
+    // bilinear interpolation
+    int vertexIndex = getNearestVtx(pos);
+    vec3 vertexPos = geometryData[vertexIndex];
+
+    // indices of the vertices in the cell are:
+    // 2 -- 3
+    // |    |
+    // 0 -- 1
+    if (getRightNeigh(vertexIndex) < 0 || pos.v[0] < vertexPos.v[0])
+    {
+        vtxID[0] = getLeftNeigh(vertexIndex);
+        vtxID[1] = vertexIndex;
+    } else {
+        vtxID[0] = vertexIndex;
+        vtxID[1] = getRightNeigh(vertexIndex);
+    }
+
+    /*
+    vec3 v0 = geometryData[vtxID[0]], v1 = geometryData[vtxID[1]];
+    if (vtxID[0] < 0 || vtxID[1] < 0 )
+    {
+        std::cout << "vtxIDs: " << vtxID[0] << ", " << vtxID[1] << std::endl;
+        std::cout << std::endl;
+    }
+    */
+
+    if (getBottomNeigh(vtxID[0]) < 0 || pos.v[1] < vertexPos.v[1])
+    {
+        vtxID[2] = getTopNeigh(vtxID[0]);
+        vtxID[3] = getTopNeigh(vtxID[1]);
+    } else {
+        vtxID[2] = vtxID[0];
+        vtxID[3] = vtxID[1];
+        vtxID[0] = getBottomNeigh(vtxID[2]);
+        vtxID[1] = getBottomNeigh(vtxID[3]);
+    }
+
+    /*
+    vec3 v2 = geometryData[vtxID[2]], v3 = geometryData[vtxID[3]];
+    if (vtxID[2] < 0 || vtxID[3] < 0)
+    {
+        std::cout << "vtxIDs: " << vtxID[0] << ", " << vtxID[1] << ", " << vtxID[2] << ", " << vtxID[3] << std::endl;
+        std::cout << std::endl;
+    }
+    */
+
+    float deltaX = geometryData[vtxID[1]].v[0] - geometryData[vtxID[0]].v[0],
+        deltaY = geometryData[vtxID[0]].v[1] - geometryData[vtxID[2]].v[1];
+
+    float deltaX1 = pos.v[0] - geometryData[vtxID[0]].v[0],
+        deltaX2 = geometryData[vtxID[1]].v[0] - pos.v[0],
+        deltaY1 = pos.v[1] - geometryData[vtxID[2]].v[1],
+        deltaY2 = geometryData[vtxID[0]].v[1] - pos.v[1];
+
+    float c = 1 / (deltaX * deltaY);
+    coef[0] = deltaX2 * deltaY1 * c;
+    coef[1] = deltaX1 * deltaY1 * c;
+    coef[2] = deltaX2 * deltaY2 * c;
+    coef[3] = deltaX1 * deltaY2 * c;
     return true;
 }
 
@@ -212,20 +262,20 @@ int FlowGeometry::getTopNeigh(int vtxID)
 	//remember that the data is structured with (0,0) in the upper-left corner and (1,1) in the lower-right
 	//that's why we are subtracting 1 to find the top neighbour
     int y = getVtxY(vtxID);
-    return (y+1 < dim[1]) ? getVtx(getVtxX(vtxID), y-1) : -1;
+    return (y > 0) ? getVtx(getVtxX(vtxID), y-1) : -1;
 }
 
 int FlowGeometry::getLeftNeigh(int vtxID)
 {
     int x = getVtxX(vtxID);
-    return (x > 1) ? getVtx(x-1,getVtxY(vtxID)) : -1;
+    return (x > 0) ? getVtx(x-1,getVtxY(vtxID)) : -1;
 }
 
 int FlowGeometry::getBottomNeigh(int vtxID)
 {
 	//remember that the data is structured with (0,0) in the upper-left corner and (1,1) in the lower-right
     int y = getVtxY(vtxID);
-    return (y < 1) ? getVtx(getVtxX(vtxID), y+1) : -1;
+    return (y+1 < dim[1]) ? getVtx(getVtxX(vtxID), y+1) : -1;
 }
 
 vec3 FlowGeometry::normalizeCoords(vec3 pos)
