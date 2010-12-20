@@ -218,12 +218,12 @@ float FlowGeometry::getMaxY()
     return boundaryMax[1];
 }
 
-inline int FlowGeometry::getDimX()
+int FlowGeometry::getDimX()
 {
 	return (isFlipped) ? dim[1] : dim[0];
 }
 
-inline int FlowGeometry::getDimY()
+int FlowGeometry::getDimY()
 {
 	return (isFlipped) ? dim[0] : dim[1];
 }
