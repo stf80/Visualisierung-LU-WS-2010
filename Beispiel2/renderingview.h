@@ -87,6 +87,10 @@ private:
     bool colorCodingNeedsUpdate, arrowPlotNeedsUpdate, streamlinesNeedsUpdate;
 
     QImage colorCodingImage, arrowPlotImage, streamlinesImage;
+
+    typedef QList<vec3> Streamline;
+    Streamline computeStreamline(vec3 p);
+    vec3 selectSeedPoint(Streamline streamLine, bool& valid);
 };
 
 #endif // RenderingView_H

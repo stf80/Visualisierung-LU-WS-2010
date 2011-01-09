@@ -305,6 +305,23 @@ void RenderingView::paintEvent(QPaintEvent *e)
                     }
                 }
             } else { // TODO: evenly-spaced streamlines
+                // TODO: data structure for streamline lookup
+                QQueue<Streamline> streamlineQueue;
+                Streamline currentStreamline = computeStreamline(vec3(0,0));
+                bool finished = false;
+                do {
+                    bool valid;
+                    vec3 seedPoint = selectSeedPoint(currentStreamline, valid);
+                    if (valid) {
+                        streamlineQueue.append(computeStreamline(seedPoint));
+                    } else {
+                        if (streamlineQueue.empty()) {
+                            finished = true;
+                        } else {
+                            currentStreamline = streamlineQueue.dequeue();
+                        }
+                    }
+                } while (!finished);
             }
 
             streamlinesNeedsUpdate = false;
@@ -312,6 +329,17 @@ void RenderingView::paintEvent(QPaintEvent *e)
 
         painter.drawImage((width() - w) / 2, (height() - h) / 2, streamlinesImage);
     }
+}
+
+RenderingView::Streamline RenderingView::computeStreamline(vec3 p)
+{
+    return Streamline();
+}
+
+vec3 RenderingView::selectSeedPoint(Streamline streamLine, bool& valid)
+{
+    valid = false;
+    return vec3();
 }
 
 /*
