@@ -5,6 +5,7 @@
 
 #include "FlowData.h"
 #include "renderingview.h"
+#include "gradientview.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -17,12 +18,18 @@ MainWindow::MainWindow(QWidget *parent) :
     renderingView = new RenderingView(ui, ui->rendererGroupBox);
     ui->renderingLayout->addWidget(renderingView);
 
+    gradientView = new GradientView(renderingView, ui->gradientGroupBox);
+    ui->gradientLayout->addWidget(gradientView);
+
     connect(ui->colorCodingActive, SIGNAL(toggled(bool)),
             renderingView, SLOT(updateColorCoding()));
     connect(ui->colorCodingChannel, SIGNAL(valueChanged(int)),
             renderingView, SLOT(updateColorCoding()));
     connect(ui->colorCodingGradient, SIGNAL(currentIndexChanged(int)),
             renderingView, SLOT(updateColorCoding()));
+
+    connect(ui->colorCodingGradient, SIGNAL(currentIndexChanged(int)),
+            gradientView, SLOT(update()));
 
     connect(ui->arrowPlotActive, SIGNAL(toggled(bool)),
             renderingView, SLOT(updateArrowPlot()));
@@ -33,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->arrowPlotDistance, SIGNAL(valueChanged(int)),
             renderingView, SLOT(updateArrowPlot()));
     connect(ui->arrowPlotScale, SIGNAL(toggled(bool)),
+            renderingView, SLOT(updateArrowPlot()));
+    connect(ui->arrowPlotSize, SIGNAL(valueChanged(int)),
             renderingView, SLOT(updateArrowPlot()));
 
     connect(ui->streamlinesActive, SIGNAL(toggled(bool)),
@@ -50,6 +59,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->streamlinesTimeStep, SIGNAL(valueChanged(double)),
             renderingView, SLOT(updateStreamlines()));
     connect(ui->streamlinesSteps, SIGNAL(valueChanged(int)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesTapering, SIGNAL(toggled(bool)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesMaximumWidth, SIGNAL(valueChanged(int)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesGlyphMapping, SIGNAL(toggled(bool)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesGlyphDistance, SIGNAL(valueChanged(int)),
+            renderingView, SLOT(updateStreamlines()));
+    connect(ui->streamlinesGlyphSize, SIGNAL(valueChanged(int)),
             renderingView, SLOT(updateStreamlines()));
 }
 

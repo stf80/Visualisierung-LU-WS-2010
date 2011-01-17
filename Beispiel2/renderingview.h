@@ -40,7 +40,7 @@ public:
           *
           * @param p the QPainter to use for drawing
          */
-    void paint(QPainter *p);
+    //void paint(QPainter *p);
 
     /**
           * @brief Invoked when the widget should redraw itself. Redraws the widget using paint().
@@ -57,6 +57,9 @@ public:
 public:
     void setDataset(FlowData* dataset);
 
+    /// maps a normalized value to an ARGB color using a given gradient function
+    QRgb normValueToRGB(float normValue);
+
 public slots:
     void updateDerivedChannels();
     void updateColorCoding();
@@ -71,12 +74,9 @@ protected:
     */
 
 private:
-    /// maps a normalized value to an ARGB color using a given gradient function
-    QRgb normValueToRGB(float normValue, int gradient);
-
     Ui::MainWindow *ui;
 
-    QGLShaderProgram *program;
+    //QGLShaderProgram *program;
 
     // int width, height; // witdh and height of viewport
 

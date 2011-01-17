@@ -12,6 +12,7 @@ namespace Ui {
 //#include "renderingview.h"
 
 class RenderingView;
+class GradientView;
 
 /**
  * @brief The main window of the application. Also handles menu actions.
@@ -55,6 +56,7 @@ private:
     FlowData flowData;
 
     RenderingView *renderingView;
+    GradientView *gradientView;
 };
 
 #endif // MAINWINDOW_H

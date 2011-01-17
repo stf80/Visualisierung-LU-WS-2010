@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     framework/FlowGeometry.cpp \
     framework/FlowData.cpp \
     framework/FlowChannel.cpp \
-    framework/vec3.cpp
+    framework/vec3.cpp \
+    gradientview.cpp
 
 HEADERS  += mainwindow.h \
     renderingview.h \
@@ -29,7 +30,8 @@ HEADERS  += mainwindow.h \
     framework/FlowGeometry.h \
     framework/FlowData.h \
     framework/vec3.h \
-    renderingview.h
+    renderingview.h \
+    gradientview.h
 
 FORMS    += mainwindow.ui
 

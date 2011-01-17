@@ -87,8 +87,10 @@ QSize RenderingView::sizeHint() const
     return QSize(400, 400);
 }
 
-QRgb RenderingView::normValueToRGB(float normValue, int gradient)
+QRgb RenderingView::normValueToRGB(float normValue)
 {
+    int gradient = ui->colorCodingGradient->currentIndex();
+
     switch (gradient)
     {
     default:
@@ -97,6 +99,12 @@ QRgb RenderingView::normValueToRGB(float normValue, int gradient)
         break;
     case 1: // heat
         return QColor(normValue * 255, 255 - normValue * 255, 0).rgba();
+        break;
+    case 2: // HSV, with varying hue
+        QColor color;
+        color.setHsvF(normValue, 1.f, 1.f);
+
+        return color.rgba();
         break;
     // TODO: other gradients
     }
@@ -147,8 +155,6 @@ void RenderingView::paintEvent(QPaintEvent *e)
         {
             colorCodingImage.fill(0x0000FF00);
 
-            int gradient = ui->colorCodingGradient->currentIndex();
-
             for (int y = 0; y < h; ++y)
             {
                 for (int x = 0; x < w; ++x)
@@ -156,7 +162,7 @@ void RenderingView::paintEvent(QPaintEvent *e)
                     float rawValue = channel->getValueNormPos(((float) x) / w, ((float) y) / h);
                     float normValue = channel->normalizeValue(rawValue);
 
-                    colorCodingImage.setPixel(x, y, normValueToRGB(normValue, gradient));
+                    colorCodingImage.setPixel(x, y, normValueToRGB(normValue));
                 }
             }
 
@@ -181,10 +187,11 @@ void RenderingView::paintEvent(QPaintEvent *e)
             arrowPlotPainter.setBrush(Qt::black);
 
             int dist = ui->arrowPlotDistance->value();
+            int size = dist * ui->arrowPlotSize->value() / 100;
             const QPointF arrowPoints[] = {
-                QPointF(dist / 2.f, 0),
-                QPointF(-dist / 2.f, -dist / 3.f),
-                QPointF(-dist / 2.f,  dist / 3.f)
+                QPointF(size / 2.f, 0),
+                QPointF(-size / 2.f, -size / 3.f),
+                QPointF(-size / 2.f,  size / 3.f)
             };
 
             for (int y = dist / 2; y < h; y += dist)
@@ -238,9 +245,13 @@ void RenderingView::paintEvent(QPaintEvent *e)
 
             QPainter streamlinesPainter(&streamlinesImage);
             streamlinesPainter.setRenderHint(QPainter::Antialiasing);
-            streamlinesPainter.setBrush(Qt::black);
+            QBrush brush = Qt::black;
+            streamlinesPainter.setBrush(brush);
 
             float dt = ui->streamlinesTimeStep->value();
+            bool tapering = ui->streamlinesTapering->isChecked(),
+                glyphMapping = ui->streamlinesGlyphMapping->isChecked();
+            int glyphDistance = ui->streamlinesGlyphDistance->value();
 
             if (ui->streamlinesSpacing->currentIndex() == 0) // regular spacing
             {
@@ -253,6 +264,9 @@ void RenderingView::paintEvent(QPaintEvent *e)
                     for (int x = dist / 2; x < w; x += dist)
                     {
                         float normPosX = ((float) x) / w;
+
+                        // length of path along streamline from last glyph to current position (in pixels)
+                        float pathLength = glyphDistance; // draw glyph at start of path
 
                         // perform integration in geometry coordinates
                         vec3 pos = flowData->unNormalizeCoords(vec3(normPosX, normPosY, 0));
@@ -292,13 +306,70 @@ void RenderingView::paintEvent(QPaintEvent *e)
                             if (pos == newPos) // singularity
                                 break;
 
+                            // tapering
+                            if (tapering)
+                            {
+                                FlowChannel *channelLength = flowData->getChannel(channelVectorLength);
+
+                                float rawValueLength = channelLength->getValueNormPos(normPosX, normPosY);
+                                float normValueLength = channelLength->normalizeValue(rawValueLength);
+
+                                float width = 0.1f + normValueLength *
+                                              (ui->streamlinesMaximumWidth->value() - 0.1f);
+                                QPen pen(brush, width);
+                                streamlinesPainter.setPen(pen);
+                            }
+
                             // transform real geometrical coordinates to pixel coordinates
                             vec3 v1 = flowData->normalizeCoords(pos),
                             v2 = flowData->normalizeCoords(newPos);
+                            vec3 p1(v1.v[0] * w, v1.v[1] * h),
+                                p2(v2.v[0] * w, v2.v[1] * h);
 
-                            streamlinesPainter.drawLine(QPointF(v1.v[0] * w, v1.v[1] * h),
-                                                        QPointF(v2.v[0] * w, v2.v[1] * h));
+                            streamlinesPainter.drawLine(QPointF(p1.v[0], p1.v[1]),
+                                                        QPointF(p2.v[0], p2.v[1]));
 
+                            // glyph mapping
+                            if (glyphMapping)
+                            {
+                                vec3 d = p2 - p1;
+                                float newPathLength = pathLength +
+                                    sqrt(d.v[0] * d.v[0] + d.v[1] * d.v[1]);
+
+                                if (newPathLength > glyphDistance)
+                                {
+                                    int size = ui->streamlinesGlyphDistance->value() *
+                                               ui->streamlinesGlyphSize->value() / 100;
+                                    const QPointF arrowPoints[] = {
+                                        QPointF(size / 2.f, 0),
+                                        QPointF(-size / 2.f, -size / 3.f),
+                                        QPointF(-size / 2.f,  size / 3.f)
+                                    };
+
+                                    float f = (newPathLength - glyphDistance) / (newPathLength - pathLength);
+                                    vec3 glyphPos = p1 * f + p2 * (1 - f);
+
+                                    streamlinesPainter.save();
+
+                                    streamlinesPainter.translate(glyphPos.v[0], glyphPos.v[1]);
+                                    streamlinesPainter.rotate(atan2(rawValueY, rawValueX) * 180 / PI);
+
+                                    FlowChannel *channelLength = flowData->getChannel(channelVectorLength);
+
+                                    float rawValueLength = channelLength->getValueNormPos(normPosX, normPosY);
+                                    float normValueLength = channelLength->normalizeValue(rawValueLength);
+
+                                    // scale area, not length of vectors
+                                    float scale = sqrt(normValueLength);
+                                    streamlinesPainter.scale(scale, scale);
+
+                                    streamlinesPainter.drawPolygon(arrowPoints, 3);
+                                    streamlinesPainter.restore();
+
+                                    newPathLength -= glyphDistance;
+                                }
+                                pathLength = newPathLength;
+                            }
                             ++steps;
                             pos = newPos;
                         }
