@@ -89,8 +89,16 @@ private:
     QImage colorCodingImage, arrowPlotImage, streamlinesImage;
 
     typedef QList<vec3> Streamline;
-    Streamline computeStreamline(vec3 p);
+    Streamline computeStreamline(vec3 p, int w, int h);
     vec3 selectSeedPoint(Streamline streamLine, bool& valid);
+    bool isPointValid(vec3 p, int testDistance);
+    void addPointToLookup(vec3 p);
+    vec3 integratePoint(vec3 pos, FlowChannel* channelX, FlowChannel* channelY, float dt, float direction);
+    void drawStreamline(const Streamline& streamline, QPainter& painter);
+
+    QList<vec3>* lookupGrid; // two-dimensional cartesian lookup structure. each cell stores a list of points (x,y); z is ignored
+    int lookupW, lookupH; // dimensions of cartesian grid
+    int dSep, dTest;
 };
 
 #endif // RenderingView_H

@@ -377,22 +377,32 @@ void RenderingView::paintEvent(QPaintEvent *e)
                 }
             } else { // TODO: evenly-spaced streamlines
                 // TODO: data structure for streamline lookup
+                dSep = ui->streamlinesDSep->value();
+                dTest = ui->streamlinesDTest->value();
+                lookupW = w / dSep;
+                lookupH = h / dSep;
+                lookupGrid = new QList<vec3>[lookupW * lookupH];
                 QQueue<Streamline> streamlineQueue;
-                Streamline currentStreamline = computeStreamline(vec3(0,0));
+                Streamline currentStreamline = computeStreamline(vec3(w/2,h/2), w, h);
+                drawStreamline(currentStreamline, streamlinesPainter);
                 bool finished = false;
                 do {
                     bool valid;
                     vec3 seedPoint = selectSeedPoint(currentStreamline, valid);
                     if (valid) {
-                        streamlineQueue.append(computeStreamline(seedPoint));
+                        qDebug() << "Valid seedpoint: (" << seedPoint.v[0] << "," << seedPoint.v[1] << ")";
+                        streamlineQueue.append(computeStreamline(seedPoint, w, h));
                     } else {
+                        qDebug() << "No valid seedpoint, next streamline (queue length: " << streamlineQueue.size() << ")";
                         if (streamlineQueue.empty()) {
                             finished = true;
                         } else {
                             currentStreamline = streamlineQueue.dequeue();
+                            drawStreamline(currentStreamline, streamlinesPainter);
                         }
                     }
                 } while (!finished);
+                delete[] lookupGrid;
             }
 
             streamlinesNeedsUpdate = false;
@@ -402,15 +412,174 @@ void RenderingView::paintEvent(QPaintEvent *e)
     }
 }
 
-RenderingView::Streamline RenderingView::computeStreamline(vec3 p)
+void RenderingView::drawStreamline(const Streamline& streamline, QPainter& painter)
 {
-    return Streamline();
+    for (int i=0; i<streamline.size()-1; i++) {
+        const vec3& p0 = streamline[i];
+        const vec3& p1 = streamline[i+1];
+        painter.drawLine(QPointF(p0.v[0], p0.v[1]), QPointF(p1.v[0], p1.v[1]));
+    }
+}
+
+vec3 RenderingView::integratePoint(vec3 pos, FlowChannel* channelX, FlowChannel* channelY, float dt, float direction) // direction is either -1.0f or 1.0f
+{
+    vec3 v = vec3(channelX->getValue(pos), channelY->getValue(pos)) * dt;
+    vec3 newPos;
+    if (ui->streamlinesIntegration->currentIndex() == 0) // Euler
+    {
+        newPos = pos + v * direction;
+    }
+    else
+    { // 2nd order Runge-Kutta
+        vec3 midPoint = pos + v * 0.5f;
+
+        if (midPoint.v[0] >= flowData->getMinX() && midPoint.v[0] <= flowData->getMaxX()
+            && midPoint.v[1] >= flowData->getMinY() && midPoint.v[1] <= flowData->getMaxY())
+        {
+            float newRawValueX = channelX->getValue(midPoint);
+            float newRawValueY = channelY->getValue(midPoint);
+
+            v = vec3(newRawValueX, newRawValueY, 0) * dt;
+            newPos = pos + v * direction;
+        } else
+            newPos = pos;
+    }
+    return newPos;
+}
+
+RenderingView::Streamline RenderingView::computeStreamline(vec3 p, int w, int h)
+{
+    int steps;
+    vec3 pos;
+    vec3 posPixel;
+    FlowChannel *channelX = flowData->getChannel(ui->arrowPlotChannelX->value());
+    FlowChannel *channelY = flowData->getChannel(ui->arrowPlotChannelY->value());
+    float dt = ui->streamlinesTimeStep->value();
+    vec3 normPos(p.v[0] / w, p.v[1] / h);
+    // perform integration in geometry coordinates
+    vec3 initialPos = flowData->unNormalizeCoords(normPos);
+    Streamline streamlinePlus;
+    streamlinePlus.append(p);
+    addPointToLookup(p);
+    steps = ui->streamlinesSteps->value();
+    pos = initialPos;
+    posPixel = p;
+    while (pos.v[0] >= flowData->getMinX() && pos.v[0] <= flowData->getMaxX()
+        && pos.v[1] >= flowData->getMinY() && pos.v[1] <= flowData->getMaxY()
+        && steps > 0)
+    {
+        steps--;
+        vec3 newPos = integratePoint(pos, channelX, channelY, dt, 1.0f);
+
+        if (pos == newPos) // singularity
+            break;
+
+        vec3 newPosNormalized = flowData->normalizeCoords(newPos);
+        vec3 newPosPixel(newPosNormalized.v[0] * w, newPosNormalized.v[1] * h);
+        if (newPosPixel.dist(posPixel) < dTest) {
+            pos = newPos;
+            continue;
+        }
+
+        if (!isPointValid(newPosPixel, dTest)) break;
+        streamlinePlus.append(newPosPixel);
+        addPointToLookup(newPosPixel);
+        pos = newPos;
+        posPixel = newPosPixel;
+    }
+    Streamline streamlineMinus;
+    steps = ui->streamlinesSteps->value();
+    pos = initialPos;
+    posPixel = p;
+    while (pos.v[0] >= flowData->getMinX() && pos.v[0] <= flowData->getMaxX()
+        && pos.v[1] >= flowData->getMinY() && pos.v[1] <= flowData->getMaxY()
+        && steps > 0)
+    {
+        steps--;
+        vec3 newPos = integratePoint(pos, channelX, channelY, dt, -1.0f);
+
+        if (pos == newPos) // singularity
+            break;
+
+        vec3 newPosNormalized = flowData->normalizeCoords(newPos);
+        vec3 newPosPixel(newPosNormalized.v[0] * w, newPosNormalized.v[1] * h);
+        if (newPosPixel.dist(posPixel) < dTest) {
+            pos = newPos;
+            continue;
+        }
+
+        if (!isPointValid(newPosPixel, dTest)) break;
+        streamlineMinus.append(newPosPixel);
+        addPointToLookup(newPosPixel);
+        pos = newPos;
+        posPixel = newPosPixel;
+    }
+
+    Streamline streamline;
+    for (int i=streamlineMinus.size() - 1; i>=0; i--) {
+        streamline.append(streamlineMinus[i]);
+    }
+    for (int i=0; i<streamlinePlus.size(); i++) {
+        streamline.append(streamlinePlus[i]);
+    }
+
+    return streamline;
 }
 
 vec3 RenderingView::selectSeedPoint(Streamline streamLine, bool& valid)
 {
+    if (streamLine.size() < 2) {
+        valid = false;
+        return vec3();
+    }
+    valid = true;
+    for (int i=1; i<streamLine.size(); i++) {
+        vec3& p0 = streamLine[i-1];
+        vec3& p1 = streamLine[i];
+        vec3 p0p1 = p1 - p0;
+        vec3 mid = p0 + p0p1 / 2.0f;
+        vec3 normal1(-p0p1.v[1], p0p1.v[0]);
+        vec3 normal2(p0p1.v[1], -p0p1.v[0]);
+        vec3 candidate1 = mid + normal1;
+        if (isPointValid(candidate1, dSep)) return candidate1;
+        vec3 candidate2 = mid + normal2;
+        if (isPointValid(candidate2, dSep)) return candidate2;
+    }
     valid = false;
     return vec3();
+}
+
+bool RenderingView::isPointValid(vec3 p, int testDistance)
+{
+    int x = p.v[0] / dSep;
+    int y = p.v[1] / dSep;
+    int idx = y * lookupW + x;
+    if (idx < 0 || idx >= lookupW * lookupH) return false;
+    const int indices[] = {
+        idx, idx - 1, idx + 1,
+        idx + lookupW, idx + lookupW - 1, idx + lookupW + 1,
+        idx - lookupW, idx - lookupW - 1, idx - lookupW + 1,
+    };
+    for (int j = 0; j < 9; j++) {
+        if (indices[j] < 0 || indices[j] >= lookupW * lookupH) continue;
+        QList<vec3>& cell = lookupGrid[indices[j]];
+        for (int i=0; i<cell.size(); i++) {
+            vec3& cellPoint = cell[i];
+            vec3 dv = cellPoint - p;
+            float dist = sqrt(dv.v[0] * dv.v[0] + dv.v[1] * dv.v[1]);
+            if (dist < (float)testDistance) return false;
+        }
+    }
+    return true;
+}
+
+void RenderingView::addPointToLookup(vec3 p)
+{
+    int x = p.v[0] / dSep;
+    int y = p.v[1] / dSep;
+    int idx = y * lookupW + x;
+    QList<vec3>& cell = lookupGrid[idx];
+    cell.append(p);
 }
 
 /*
