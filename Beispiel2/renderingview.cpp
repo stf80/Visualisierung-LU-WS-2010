@@ -248,10 +248,10 @@ void RenderingView::paintEvent(QPaintEvent *e)
             QBrush brush = Qt::black;
             streamlinesPainter.setBrush(brush);
 
-            float dt = ui->streamlinesTimeStep->value();
-            bool tapering = ui->streamlinesTapering->isChecked(),
-                glyphMapping = ui->streamlinesGlyphMapping->isChecked();
-            int glyphDistance = ui->streamlinesGlyphDistance->value();
+            //float dt = ui->streamlinesTimeStep->value();
+            //bool tapering = ui->streamlinesTapering->isChecked(),
+            //    glyphMapping = ui->streamlinesGlyphMapping->isChecked();
+            //int glyphDistance = ui->streamlinesGlyphDistance->value();
 
             if (ui->streamlinesSpacing->currentIndex() == 0) // regular spacing
             {
@@ -259,124 +259,15 @@ void RenderingView::paintEvent(QPaintEvent *e)
 
                 for (int y = dist / 2; y < h; y += dist)
                 {
-                    float normPosY = ((float) y) / h;
+                    //float normPosY = ((float) y) / h;
 
                     for (int x = dist / 2; x < w; x += dist)
                     {
-                        float normPosX = ((float) x) / w;
-
-                        // length of path along streamline from last glyph to current position (in pixels)
-                        float pathLength = glyphDistance; // draw glyph at start of path
-
-                        // perform integration in geometry coordinates
-                        vec3 pos = flowData->unNormalizeCoords(vec3(normPosX, normPosY, 0));
-
-                        int steps = 0;
-
-                        // TODO integrate in both directions
-                        while (pos.v[0] >= flowData->getMinX() && pos.v[0] <= flowData->getMaxX()
-                            && pos.v[1] >= flowData->getMinY() && pos.v[1] <= flowData->getMaxY()
-                            && steps < ui->streamlinesSteps->value())
-                        {
-
-                            float rawValueX = channelX->getValue(pos);
-                            float rawValueY = channelY->getValue(pos);
-
-                            vec3 newPos;
-                            if (ui->streamlinesIntegration->currentIndex() == 0) // Euler
-                            {
-                                vec3 v = vec3(rawValueX, rawValueY, 0) * dt;
-                                newPos = pos + v;
-                            } else { // 2nd order Runge-Kutta
-                                vec3 v = vec3(rawValueX, rawValueY, 0) * dt;
-                                vec3 midPoint = pos + v * 0.5f;
-
-                                if (midPoint.v[0] >= flowData->getMinX() && midPoint.v[0] <= flowData->getMaxX()
-                                    && midPoint.v[1] >= flowData->getMinY() && midPoint.v[1] <= flowData->getMaxY())
-                                {
-                                    float newRawValueX = channelX->getValue(midPoint);
-                                    float newRawValueY = channelY->getValue(midPoint);
-
-                                    v = vec3(newRawValueX, newRawValueY, 0) * dt;
-                                    newPos = pos + v;
-                                } else
-                                    newPos = pos;
-                            }
-
-                            if (pos == newPos) // singularity
-                                break;
-
-                            // tapering
-                            if (tapering)
-                            {
-                                FlowChannel *channelLength = flowData->getChannel(channelVectorLength);
-
-                                float rawValueLength = channelLength->getValueNormPos(normPosX, normPosY);
-                                float normValueLength = channelLength->normalizeValue(rawValueLength);
-
-                                float width = 0.1f + normValueLength *
-                                              (ui->streamlinesMaximumWidth->value() - 0.1f);
-                                QPen pen(brush, width);
-                                streamlinesPainter.setPen(pen);
-                            }
-
-                            // transform real geometrical coordinates to pixel coordinates
-                            vec3 v1 = flowData->normalizeCoords(pos),
-                            v2 = flowData->normalizeCoords(newPos);
-                            vec3 p1(v1.v[0] * w, v1.v[1] * h),
-                                p2(v2.v[0] * w, v2.v[1] * h);
-
-                            streamlinesPainter.drawLine(QPointF(p1.v[0], p1.v[1]),
-                                                        QPointF(p2.v[0], p2.v[1]));
-
-                            // glyph mapping
-                            if (glyphMapping)
-                            {
-                                vec3 d = p2 - p1;
-                                float newPathLength = pathLength +
-                                    sqrt(d.v[0] * d.v[0] + d.v[1] * d.v[1]);
-
-                                if (newPathLength > glyphDistance)
-                                {
-                                    int size = ui->streamlinesGlyphDistance->value() *
-                                               ui->streamlinesGlyphSize->value() / 100;
-                                    const QPointF arrowPoints[] = {
-                                        QPointF(size / 2.f, 0),
-                                        QPointF(-size / 2.f, -size / 3.f),
-                                        QPointF(-size / 2.f,  size / 3.f)
-                                    };
-
-                                    float f = (newPathLength - glyphDistance) / (newPathLength - pathLength);
-                                    vec3 glyphPos = p1 * f + p2 * (1 - f);
-
-                                    streamlinesPainter.save();
-
-                                    streamlinesPainter.translate(glyphPos.v[0], glyphPos.v[1]);
-                                    streamlinesPainter.rotate(atan2(rawValueY, rawValueX) * 180 / PI);
-
-                                    FlowChannel *channelLength = flowData->getChannel(channelVectorLength);
-
-                                    float rawValueLength = channelLength->getValueNormPos(normPosX, normPosY);
-                                    float normValueLength = channelLength->normalizeValue(rawValueLength);
-
-                                    // scale area, not length of vectors
-                                    float scale = sqrt(normValueLength);
-                                    streamlinesPainter.scale(scale, scale);
-
-                                    streamlinesPainter.drawPolygon(arrowPoints, 3);
-                                    streamlinesPainter.restore();
-
-                                    newPathLength -= glyphDistance;
-                                }
-                                pathLength = newPathLength;
-                            }
-                            ++steps;
-                            pos = newPos;
-                        }
+                        Streamline sl = computeStreamline(vec3(x, y), w, h, false);
+                        drawStreamline(sl, streamlinesPainter, w, h);
                     }
                 }
-            } else { // TODO: evenly-spaced streamlines
-                // TODO: data structure for streamline lookup
+            } else {
                 dSep = ui->streamlinesDSep->value();
                 dTest = ui->streamlinesDTest->value();
                 lookupW = w / dSep;
@@ -384,7 +275,7 @@ void RenderingView::paintEvent(QPaintEvent *e)
                 lookupGrid = new QList<vec3>[lookupW * lookupH];
                 QQueue<Streamline> streamlineQueue;
                 Streamline currentStreamline = computeStreamline(vec3(w/2,h/2), w, h);
-                drawStreamline(currentStreamline, streamlinesPainter);
+                drawStreamline(currentStreamline, streamlinesPainter, w, h);
                 bool finished = false;
                 do {
                     bool valid;
@@ -398,7 +289,7 @@ void RenderingView::paintEvent(QPaintEvent *e)
                             finished = true;
                         } else {
                             currentStreamline = streamlineQueue.dequeue();
-                            drawStreamline(currentStreamline, streamlinesPainter);
+                            drawStreamline(currentStreamline, streamlinesPainter, w, h);
                         }
                     }
                 } while (!finished);
@@ -412,12 +303,73 @@ void RenderingView::paintEvent(QPaintEvent *e)
     }
 }
 
-void RenderingView::drawStreamline(const Streamline& streamline, QPainter& painter)
+void RenderingView::drawStreamline(const Streamline& streamline, QPainter& painter, int w, int h)
 {
+    bool tapering = ui->streamlinesTapering->isChecked();
+    bool glyphMapping = ui->streamlinesGlyphMapping->isChecked();
+    int  glyphDistance = ui->streamlinesGlyphDistance->value();
+
+    // length of path along streamline from last glyph to current position (in pixels)
+    float pathLength = glyphDistance; // draw glyph at start of path
+
     for (int i=0; i<streamline.size()-1; i++) {
         const vec3& p0 = streamline[i];
         const vec3& p1 = streamline[i+1];
+
+        if (tapering)
+        {
+            FlowChannel *channelLength = flowData->getChannel(channelVectorLength);
+
+            float rawValueLength = channelLength->getValueNormPos(p0.v[0] / w, p0.v[1] / h);
+            float normValueLength = channelLength->normalizeValue(rawValueLength);
+
+            float width = 0.1f + normValueLength *
+                          (ui->streamlinesMaximumWidth->value() - 0.1f);
+            QPen pen(painter.brush(), width);
+            painter.setPen(pen);
+        }
+
         painter.drawLine(QPointF(p0.v[0], p0.v[1]), QPointF(p1.v[0], p1.v[1]));
+
+        if (glyphMapping)
+        {
+            vec3 d = p1 - p0;
+            float newPathLength = pathLength + d.length();
+
+            if (newPathLength > glyphDistance)
+            {
+                int size = ui->streamlinesGlyphDistance->value() *
+                           ui->streamlinesGlyphSize->value() / 100;
+                const QPointF arrowPoints[] = {
+                    QPointF(size / 2.f, 0),
+                    QPointF(-size / 2.f, -size / 3.f),
+                    QPointF(-size / 2.f,  size / 3.f)
+                };
+
+                float f = (newPathLength - glyphDistance) / (newPathLength - pathLength);
+                vec3 glyphPos = p0 * f + p1 * (1 - f);
+
+                painter.save();
+
+                painter.translate(glyphPos.v[0], glyphPos.v[1]);
+                painter.rotate(atan2(d.v[1], d.v[0]) * 180 / PI);
+
+                FlowChannel *channelLength = flowData->getChannel(channelVectorLength);
+
+                float rawValueLength = channelLength->getValueNormPos(p0.v[0] / w, p0.v[1] / h);
+                float normValueLength = channelLength->normalizeValue(rawValueLength);
+
+                // scale area, not length of vectors
+                float scale = sqrt(normValueLength);
+                painter.scale(scale, scale);
+
+                painter.drawPolygon(arrowPoints, 3);
+                painter.restore();
+
+                newPathLength -= glyphDistance;
+            }
+            pathLength = newPathLength;
+        }
     }
 }
 
@@ -447,7 +399,7 @@ vec3 RenderingView::integratePoint(vec3 pos, FlowChannel* channelX, FlowChannel*
     return newPos;
 }
 
-RenderingView::Streamline RenderingView::computeStreamline(vec3 p, int w, int h)
+RenderingView::Streamline RenderingView::computeStreamline(vec3 p, int w, int h, bool lookup)
 {
     int steps;
     vec3 pos;
@@ -460,7 +412,7 @@ RenderingView::Streamline RenderingView::computeStreamline(vec3 p, int w, int h)
     vec3 initialPos = flowData->unNormalizeCoords(normPos);
     Streamline streamlinePlus;
     streamlinePlus.append(p);
-    addPointToLookup(p);
+    if (lookup) addPointToLookup(p);
     steps = ui->streamlinesSteps->value();
     pos = initialPos;
     posPixel = p;
@@ -476,14 +428,14 @@ RenderingView::Streamline RenderingView::computeStreamline(vec3 p, int w, int h)
 
         vec3 newPosNormalized = flowData->normalizeCoords(newPos);
         vec3 newPosPixel(newPosNormalized.v[0] * w, newPosNormalized.v[1] * h);
-        if (newPosPixel.dist(posPixel) < dTest) {
+        if (lookup && newPosPixel.dist(posPixel) < dTest) {
             pos = newPos;
             continue;
         }
 
-        if (!isPointValid(newPosPixel, dTest)) break;
+        if (lookup && !isPointValid(newPosPixel, dTest)) break;
         streamlinePlus.append(newPosPixel);
-        addPointToLookup(newPosPixel);
+        if (lookup) addPointToLookup(newPosPixel);
         pos = newPos;
         posPixel = newPosPixel;
     }
@@ -503,14 +455,14 @@ RenderingView::Streamline RenderingView::computeStreamline(vec3 p, int w, int h)
 
         vec3 newPosNormalized = flowData->normalizeCoords(newPos);
         vec3 newPosPixel(newPosNormalized.v[0] * w, newPosNormalized.v[1] * h);
-        if (newPosPixel.dist(posPixel) < dTest) {
+        if (lookup && newPosPixel.dist(posPixel) < dTest) {
             pos = newPos;
             continue;
         }
 
-        if (!isPointValid(newPosPixel, dTest)) break;
+        if (lookup && !isPointValid(newPosPixel, dTest)) break;
         streamlineMinus.append(newPosPixel);
-        addPointToLookup(newPosPixel);
+        if (lookup) addPointToLookup(newPosPixel);
         pos = newPos;
         posPixel = newPosPixel;
     }
