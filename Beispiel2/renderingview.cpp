@@ -539,10 +539,12 @@ vec3 RenderingView::selectSeedPoint(Streamline streamLine, bool& valid)
         vec3 p0p1 = p1 - p0;
         vec3 mid = p0 + p0p1 / 2.0f;
         vec3 normal1(-p0p1.v[1], p0p1.v[0]);
+        normal1 /= normal1.length();
         vec3 normal2(p0p1.v[1], -p0p1.v[0]);
-        vec3 candidate1 = mid + normal1;
+        normal2 /= normal2.length();
+        vec3 candidate1 = mid + normal1 * dSep;
         if (isPointValid(candidate1, dSep)) return candidate1;
-        vec3 candidate2 = mid + normal2;
+        vec3 candidate2 = mid + normal2 * dSep;
         if (isPointValid(candidate2, dSep)) return candidate2;
     }
     valid = false;

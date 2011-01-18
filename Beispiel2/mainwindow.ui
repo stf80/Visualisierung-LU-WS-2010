@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>741</width>
-    <height>765</height>
+    <height>1008</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -308,13 +308,16 @@
            <item row="6" column="1">
             <widget class="QDoubleSpinBox" name="streamlinesDSep">
              <property name="suffix">
-              <string> %</string>
+              <string> px</string>
+             </property>
+             <property name="decimals">
+              <number>0</number>
              </property>
              <property name="minimum">
               <double>1.000000000000000</double>
              </property>
              <property name="maximum">
-              <double>99.989999999999995</double>
+              <double>100.000000000000000</double>
              </property>
              <property name="value">
               <double>6.000000000000000</double>
@@ -324,7 +327,10 @@
            <item row="7" column="1">
             <widget class="QDoubleSpinBox" name="streamlinesDTest">
              <property name="suffix">
-              <string> %</string>
+              <string> px</string>
+             </property>
+             <property name="decimals">
+              <number>0</number>
              </property>
              <property name="minimum">
               <double>1.000000000000000</double>
@@ -586,7 +592,7 @@
      <x>0</x>
      <y>0</y>
      <width>741</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDatei">
