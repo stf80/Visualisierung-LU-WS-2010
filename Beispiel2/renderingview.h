@@ -12,7 +12,7 @@
 const double PI = 3.14159265358979323846;
 
 /**
- * @brief Rendering view of the volume data.
+ * @brief Rendering view of flow data.
  *
 */
 class RenderingView
@@ -25,6 +25,7 @@ public:
     /**
       * @brief Default constructor
       *
+      @param ui the main window, containing pointers to UI objects
       * @param parent parent widget
      */
     RenderingView(Ui::MainWindow *ui, QWidget *parent = 0);
@@ -35,14 +36,7 @@ public:
      */
     ~RenderingView();
 
-    /**
-          * @brief Redraws the rendering view onto an arbitrary device using a QPainter.
-          *
-          * @param p the QPainter to use for drawing
-         */
-    //void paint(QPainter *p);
-
-    /**
+   /**
           * @brief Invoked when the widget should redraw itself. Redraws the widget using paint().
           *
           * @param e the event causing the widget to redraw itself
@@ -55,30 +49,40 @@ public:
 
 
 public:
+    /**
+      @brief Changes the data set that is to be displayed.
+      @param dataset the data set to display
+      */
     void setDataset(FlowData* dataset);
 
-    /// maps a normalized value to an ARGB color using a given gradient function
+    /**
+    @brief Maps a normalized value to an ARGB color. The gradient used depends on the value of the gradient combo box.
+    @param normValue the value to map
+    */
     QRgb normValueToRGB(float normValue);
 
 public slots:
+    /**
+      @brief Recalculates derived channels (currently only vector length) from data set.
+      */
     void updateDerivedChannels();
+    /**
+      @brief Causes color coding image plane to be redrawn.
+      */
     void updateColorCoding();
+    /**
+      @brief Causes arrow plot image plane to be redrawn.
+      */
     void updateArrowPlot();
+    /**
+      @brief Causes streamlines image plane to be redrawn.
+      */
     void updateStreamlines();
 
 protected:
-    /*
-     virtual void initializeGL();
-     virtual void paintGL();
-     virtual void resizeGL(int width, int height);
-    */
 
 private:
     Ui::MainWindow *ui;
-
-    //QGLShaderProgram *program;
-
-    // int width, height; // witdh and height of viewport
 
     FlowData *flowData;
 
