@@ -246,19 +246,11 @@ void RenderingView::paintEvent(QPaintEvent *e)
             QBrush brush = Qt::black;
             streamlinesPainter.setBrush(brush);
 
-            //float dt = ui->streamlinesTimeStep->value();
-            //bool tapering = ui->streamlinesTapering->isChecked(),
-            //    glyphMapping = ui->streamlinesGlyphMapping->isChecked();
-            //int glyphDistance = ui->streamlinesGlyphDistance->value();
-
             if (ui->streamlinesSpacing->currentIndex() == 0) // regular spacing
             {
                 int dist = ui->streamlinesDistance->value();
-
                 for (int y = dist / 2; y < h; y += dist)
                 {
-                    //float normPosY = ((float) y) / h;
-
                     for (int x = dist / 2; x < w; x += dist)
                     {
                         Streamline sl = computeStreamline(vec3(x, y), w, h, false);
@@ -280,10 +272,8 @@ void RenderingView::paintEvent(QPaintEvent *e)
                     bool valid;
                     vec3 seedPoint = selectSeedPoint(currentStreamline, valid);
                     if (valid) {
-                        qDebug() << "Valid seedpoint: (" << seedPoint.v[0] << "," << seedPoint.v[1] << ")";
                         streamlineQueue.append(computeStreamline(seedPoint, w, h, true));
                     } else {
-                        qDebug() << "No valid seedpoint, next streamline (queue length: " << streamlineQueue.size() << ")";
                         if (streamlineQueue.empty()) {
                             finished = true;
                         } else {
