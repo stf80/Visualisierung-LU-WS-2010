@@ -107,7 +107,7 @@ inline float vec3::norm() const
 	return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
 }
 //euclidian distance
-inline float vec3::length() const
+float vec3::length() const
 {
 	return sqrt(norm());
 }

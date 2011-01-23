@@ -131,6 +131,9 @@
            </item>
            <item row="3" column="1">
             <widget class="QSpinBox" name="arrowPlotDistance">
+             <property name="suffix">
+              <string> px</string>
+             </property>
              <property name="minimum">
               <number>1</number>
              </property>
@@ -277,6 +280,9 @@
            </item>
            <item row="5" column="1">
             <widget class="QSpinBox" name="streamlinesDistance">
+             <property name="suffix">
+              <string> px</string>
+             </property>
              <property name="minimum">
               <number>10</number>
              </property>
@@ -353,7 +359,7 @@
            <item row="3" column="0">
             <widget class="QLabel" name="label_12">
              <property name="text">
-              <string>Steps</string>
+              <string>Maximum Steps</string>
              </property>
             </widget>
            </item>
@@ -363,7 +369,7 @@
               <number>10</number>
              </property>
              <property name="maximum">
-              <number>1000</number>
+              <number>100000</number>
              </property>
              <property name="singleStep">
               <number>10</number>
@@ -396,6 +402,9 @@
            </item>
            <item row="11" column="1">
             <widget class="QSpinBox" name="streamlinesGlyphDistance">
+             <property name="suffix">
+              <string> px</string>
+             </property>
              <property name="minimum">
               <number>10</number>
              </property>
@@ -443,7 +452,7 @@
            <item row="9" column="1">
             <widget class="QSpinBox" name="streamlinesMaximumWidth">
              <property name="suffix">
-              <string/>
+              <string> px</string>
              </property>
              <property name="minimum">
               <number>1</number>
@@ -592,7 +601,7 @@
      <x>0</x>
      <y>0</y>
      <width>741</width>
-     <height>23</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDatei">

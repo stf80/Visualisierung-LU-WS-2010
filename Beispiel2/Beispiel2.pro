@@ -13,7 +13,6 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     renderingview.cpp \
-    glew.c \
     framework/textfile.cpp \
     framework/FlowGeometry.cpp \
     framework/FlowData.cpp \
