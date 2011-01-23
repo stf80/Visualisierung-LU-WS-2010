@@ -92,9 +92,10 @@ private:
     Streamline computeStreamline(vec3 p, int w, int h, bool lookup=true); // lookup: use lookup structure and check against dSep/dTest (yes/no)
     vec3 selectSeedPoint(Streamline streamLine, bool& valid);
     bool isPointValid(vec3 p, int testDistance);
+    float distanceToOthers(vec3 p, const Streamline& streamline);
     void addPointToLookup(vec3 p);
     vec3 integratePoint(vec3 pos, FlowChannel* channelX, FlowChannel* channelY, float dt, float direction);
-    void drawStreamline(const Streamline& streamline, QPainter& painter, int w, int h);
+    void drawStreamline(const Streamline& streamline, QPainter& painter, int w, int h, bool lookup=true); //lookup: lookup structure available (for tapering)
 
     QList<vec3>* lookupGrid; // two-dimensional cartesian lookup structure. each cell stores a list of points (x,y); z is ignored
     int lookupW, lookupH; // dimensions of cartesian grid

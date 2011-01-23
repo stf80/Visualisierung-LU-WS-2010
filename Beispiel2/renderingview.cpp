@@ -264,7 +264,7 @@ void RenderingView::paintEvent(QPaintEvent *e)
                     for (int x = dist / 2; x < w; x += dist)
                     {
                         Streamline sl = computeStreamline(vec3(x, y), w, h, false);
-                        drawStreamline(sl, streamlinesPainter, w, h);
+                        drawStreamline(sl, streamlinesPainter, w, h, false);
                     }
                 }
             } else {
@@ -274,25 +274,29 @@ void RenderingView::paintEvent(QPaintEvent *e)
                 lookupH = h / dSep;
                 lookupGrid = new QList<vec3>[lookupW * lookupH];
                 QQueue<Streamline> streamlineQueue;
-                Streamline currentStreamline = computeStreamline(vec3(w/2,h/2), w, h);
-                drawStreamline(currentStreamline, streamlinesPainter, w, h);
+                QList<Streamline> todraw;
+                Streamline currentStreamline = computeStreamline(vec3(w/2,h/2), w, h, true);
+                todraw << currentStreamline;
                 bool finished = false;
                 do {
                     bool valid;
                     vec3 seedPoint = selectSeedPoint(currentStreamline, valid);
                     if (valid) {
                         qDebug() << "Valid seedpoint: (" << seedPoint.v[0] << "," << seedPoint.v[1] << ")";
-                        streamlineQueue.append(computeStreamline(seedPoint, w, h));
+                        streamlineQueue.append(computeStreamline(seedPoint, w, h, true));
                     } else {
                         qDebug() << "No valid seedpoint, next streamline (queue length: " << streamlineQueue.size() << ")";
                         if (streamlineQueue.empty()) {
                             finished = true;
                         } else {
                             currentStreamline = streamlineQueue.dequeue();
-                            drawStreamline(currentStreamline, streamlinesPainter, w, h);
+                            todraw << currentStreamline;
                         }
                     }
                 } while (!finished);
+                for (int i=0; i<todraw.size(); i++) {
+                    drawStreamline(todraw[i], streamlinesPainter, w, h, true);
+                }
                 delete[] lookupGrid;
             }
 
@@ -303,7 +307,7 @@ void RenderingView::paintEvent(QPaintEvent *e)
     }
 }
 
-void RenderingView::drawStreamline(const Streamline& streamline, QPainter& painter, int w, int h)
+void RenderingView::drawStreamline(const Streamline& streamline, QPainter& painter, int w, int h, bool lookup)
 {
     bool tapering = ui->streamlinesTapering->isChecked();
     bool glyphMapping = ui->streamlinesGlyphMapping->isChecked();
@@ -316,15 +320,13 @@ void RenderingView::drawStreamline(const Streamline& streamline, QPainter& paint
         const vec3& p0 = streamline[i];
         const vec3& p1 = streamline[i+1];
 
-        if (tapering)
+        if (tapering && lookup)
         {
-            FlowChannel *channelLength = flowData->getChannel(channelVectorLength);
-
-            float rawValueLength = channelLength->getValueNormPos(p0.v[0] / w, p0.v[1] / h);
-            float normValueLength = channelLength->normalizeValue(rawValueLength);
-
-            float width = 0.1f + normValueLength *
-                          (ui->streamlinesMaximumWidth->value() - 0.1f);
+            float dist1 = distanceToOthers(p0, streamline);
+            float dist2 = distanceToOthers(p1, streamline);
+            float dist = (dist1 + dist2) / 2.0f;
+            float width = dist / dSep;
+            width = width * ui->streamlinesMaximumWidth->value();
             QPen pen(painter.brush(), width);
             painter.setPen(pen);
         }
@@ -486,8 +488,8 @@ vec3 RenderingView::selectSeedPoint(Streamline streamLine, bool& valid)
     }
     valid = true;
     for (int i=1; i<streamLine.size(); i++) {
-        vec3& p0 = streamLine[i-1];
-        vec3& p1 = streamLine[i];
+        const vec3& p0 = streamLine[i-1];
+        const vec3& p1 = streamLine[i];
         vec3 p0p1 = p1 - p0;
         vec3 mid = p0 + p0p1 / 2.0f;
         vec3 normal1(-p0p1.v[1], p0p1.v[0]);
@@ -525,6 +527,29 @@ bool RenderingView::isPointValid(vec3 p, int testDistance)
         }
     }
     return true;
+}
+
+// this returns MIN(dSep, distance), no smaller values than dSep possible
+float RenderingView::distanceToOthers(vec3 p, const Streamline& streamline)
+{
+    int x = p.v[0] / dSep;
+    int y = p.v[1] / dSep;
+    int idx = y * lookupW + x;
+    float dist = dSep;
+    if (idx < 0 || idx >= lookupW * lookupH) return dist;
+    QList<vec3>& cell = lookupGrid[idx];
+    for (int i=0; i<cell.size(); i++) {
+        vec3& cellPoint = cell[i];
+        bool sameStreamline = false;
+        for (int j=0; j<streamline.size(); j++) {
+            if (streamline[j] == cellPoint) sameStreamline = true;
+        }
+        if (!sameStreamline) {
+            float newDist = cellPoint.dist(p);
+            dist = min(dist, newDist);
+        }
+    }
+    return dist;
 }
 
 void RenderingView::addPointToLookup(vec3 p)
